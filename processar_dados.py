@@ -440,29 +440,39 @@ def processar_planilha_integrado(caminho_excel='DADOS.xlsx'):
                 account_codigo = account["codigo"]
                 # Dicionário para armazenar os valores calculados/obtidos desta conta para todos os períodos deste DataSource
                 account_calculated_values = {}
-
+  
                 # Itera por cada período deste DataSource
                 for period in periodos_ds:
                     # Chama a função de cálculo para obter o valor da conta neste período, usando os dados deste DataSource
                     value = get_calculated_value(account_codigo, period, account_dict, children_map, raw_data_for_ds_dict, ds_name)
                     account_calculated_values[period] = value
-
+  
                 # Cria uma cópia da conta original do plano
                 calculated_account = account.copy()
                 # Adiciona o dicionário de valores calculados/obtidos para este DataSource
                 calculated_account["valores"] = account_calculated_values
                 # Adiciona o nível hierárquico
                 calculated_account["nivel"] = level_map.get(account_codigo, 1)
-                
                 # Remove o mapeamento bruto para os DataSources para a saída final do JSON, se presente
                 if "data_sources" in calculated_account:
                     del calculated_account["data_sources"]
                 
                 # Mantém o campo 'formula' na saída JSON se ele tiver sido preenchido
                 # Não há necessidade de 'del' se o get("formula") for None, ele simplesmente não será incluído.
-
-                # Adiciona a conta (agora com valores calculados para este DataSource) à lista para esta visão
-                calculated_accounts_for_view.append(calculated_account)
+  
+                # --- INÍCIO DA NOVA LÓGICA: FILTRAR CONTAS SINTÉTICAS COM VALOR ZERO ---
+                should_add_account = True
+                # Verifica se a conta é sintética e se todos os seus valores são zero
+                if calculated_account["tipo"].lower() in ["sintetica", "analitica"]:
+                    # Verifica se todos os valores para esta conta sintética ou analitica são 0.0
+                    # Isso garante que se houver *qualquer* valor diferente de zero, a conta seja mantida.
+                    all_values_are_zero = all(val == 0.0 for val in calculated_account["valores"].values())
+                    if all_values_are_zero:
+                        should_add_account = False
+                
+                if should_add_account:
+                    calculated_accounts_for_view.append(calculated_account)
+                # --- FIM DA NOVA LÓGICA ---
 
             # Adiciona a visão calculada completa (Plano, DataSource, Períodos, Contas com Valores) à lista final de visões
             calculated_views.append({
