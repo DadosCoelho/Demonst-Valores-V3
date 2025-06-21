@@ -1,193 +1,199 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Visão Financeira Calculada</title>
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4598/4598376.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Estilos copiados da V1 e V3 */
-        body {
-             font-family: sans-serif;
-             line-height: 1.6;
-             margin: 0;
-             padding: 20px;
-             background-color: #f7f7f7;
-             color: #333;
-         }
-         .container {
-             max-width: 1200px;
-             margin: 0 auto;
-             padding: 0 15px;
-         }
-
-        /* Estilos de célula e linha */
-        .cell-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        /* Classes para seleção - REATIVADAS */
-        .cell-selecionada {
-            background-color: #fff9aa !important; /* Fundo amarelo claro */
-        }
-        .cabecalho-selecionado, .indicador-selecionado {
-            background: #60a5fa !important; /* Fundo azul claro */
-            color: #fff;
-        }
-
-        .header-box {
-            text-align: center;
-        }
-        /* A classe indicador-col agora se aplica à coluna Descrição na tbody */
-        .indicador-col {
-            background-color: #F9FAFB; /* Fundo cinza claro */
-            width: 300px; /* Largura da coluna de descrição */
-        }
-        .grande {
-            font-size: 1rem;
-        }
-        .linha-azul { /* Estilo de linha da V1 (pode ser usado opcionalmente) */
-            background-color: #DBEAFE;
-        }
-        .linha-azul-escuro { /* Estilo de linha da V1 (pode ser usado opcionalmente) */
-            background-color: #93C5FD;
-        }
-
-        /* Estilos da tabela */
-         table {
-             border-collapse: collapse;
-             width: 100%;
-             margin-top: 20px;
-             background-color: #fff;
-             border-radius: 8px;
-             overflow: hidden;
-             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-         }
-         th, td {
-             border: 1px solid #ddd;
-             padding: 10px 8px;
-             text-align: left;
-         }
-         /* Estilo para o cabeçalho da tabela (thead) */
-         thead tr {
-             background-color: #60a5fa; /* Azul da V1 para o cabeçalho */
-             color: white;
-         }
-         th {
-             font-weight: bold;
-             text-transform: uppercase;
-             position: sticky;
-             top: 0;
-             z-index: 1;
-             background-color: #60a5fa; /* Garante que o fundo do cabeçalho seja azul mesmo com sticky */
-             color: white;
-         }
-         /* Estilo específico para os títulos das colunas fixas no thead */
-         /* A coluna "Descrição" agora é a primeira TH */
-         thead th:first-child {
-             background-color: #e0e0e0; /* Cinza da V3 para cabeçalho secundário */
-             color: #333; /* Cor de texto da V3 */
-         }
-
-
-         /* A coluna de código foi removida. Ajustei o CSS para a descrição ser a primeira */
-         td.account-descricao { /* Coluna Descrição na tbody */
-             font-weight: bold; /* Deixa a descrição em negrito, como o código estava */
-             white-space: nowrap;
-             /* Indentação será aplicada via classes CSS */
-         }
-
-         /* Classes de indentação */
-         .indent-level-0 { padding-left: 10px; }
-         .indent-level-1 { padding-left: 25px; }
-         .indent-level-2 { padding-left: 40px; }
-         .indent-level-3 { padding-left: 55px; }
-         .indent-level-4 { padding-left: 70px; }
-         .indent-level-5 { padding-left: 85px; }
-
-         /* Estilos para linhas de contas por tipo (V3) */
-          .conta-sintetica td {
-              font-weight: bold;
+  <html lang="pt-br">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Visão Financeira Calculada</title>
+      <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4598/4598376.png">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+          /* Estilos copiados da V1 e V3 */
+          body {
+               font-family: sans-serif;
+               line-height: 1.6;
+               margin: 0;
+               padding: 20px;
+               background-color: #f7f7f7;
+               color: #333;
+           }
+           .container {
+               max-width: 1200px;
+               margin: 0 auto;
+               padding: 0 15px;
+           }
+  
+          /* Estilos de célula e linha */
+          .cell-box {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
           }
-           .conta-analitica {}
-          .conta-calculo td {
-              font-style: italic;
-              border-top: 1px solid #93C5FD; /* Linha acima de contas de cálculo */
+          /* Classes para seleção - REATIVADAS */
+          .cell-selecionada {
+              background-color: #fff9aa !important; /* Fundo amarelo claro */
           }
-
-
-        /* Estilos para células de valor (V3) */
-         .value-cell { /* Células de dados na tbody */
-             text-align: right;
-             white-space: nowrap;
-             font-family: monospace;
-         }
-         .negative-value {
-             color: #d32f2f;
-         }
-
-         /* Estilo para o seletor de visão (V3) */
-         .view-selector {
-             margin-bottom: 20px;
-             background-color: #fff;
-             padding: 15px;
-             border-radius: 8px;
-             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-         }
-         .view-selector label {
-             font-weight: bold;
-             margin-right: 10px;
-         }
-         .view-selector select {
-             padding: 8px;
-             border: 1px solid #ccc;
-             border-radius: 4px;
-             font-size: 1rem;
-         }
-
-         /* Remover estilos de dropdown customizado da V1 que não serão usados */
-         .dropdown-multi { display: none; }
-
-         /* Container para scrolagem horizontal da tabela (V3) */
-         .table-container {
-             overflow-x: auto;
-             margin-top: 20px;
-         }
-
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto px-4 py-8">
-         <!-- Título principal fora da tabela -->
-         <h1 class="text-2xl font-bold mb-4">Demonstração Financeira Calculada</h1>
-
-         <!-- Subtítulo para a visão selecionada -->
-         <h2 id="view-title" class="text-xl font-semibold mb-6">Selecione uma Visão para Visualizar...</h2>
-
-        <div class="flex items-center mb-6 view-selector">
-            <label for="view-select">Selecionar Visão:</label>
-            <select id="view-select"></select>
-        </div>
-
-         <div class="table-container">
-            <table id="tabela" class="min-w-full bg-white rounded-xl shadow-md border">
-                <thead>
-                     <!-- A linha de cabeçalho será adicionada pelo JS -->
-                    <tr></tr>
-                </thead>
-                <tbody>
-                    <!-- As linhas de dados serão preenchidas via JS -->
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <script>
-        // Variável que será substituída pelo script Python processar_dados.py
-        const calculatedViewsData = {
+          .cabecalho-selecionado, .indicador-selecionado {
+              background: #60a5fa !important; /* Fundo azul claro */
+              color: #fff;
+          }
+  
+          .header-box {
+              text-align: center;
+          }
+          /* A classe indicador-col agora se aplica à coluna Descrição na tbody */
+          .indicador-col {
+              background-color: #F9FAFB; /* Fundo cinza claro */
+              width: 300px; /* Largura da coluna de descrição */
+          }
+          .grande {
+              font-size: 1rem;
+          }
+          .linha-azul { /* Estilo de linha da V1 (pode ser usado opcionalmente) */
+              background-color: #DBEAFE;
+          }
+          .linha-azul-escuro { /* Estilo de linha da V1 (pode ser opcionalmente) */
+              background-color: #93C5FD;
+          }
+  
+          /* Estilos da tabela */
+           table {
+               border-collapse: collapse;
+               width: 100%;
+               margin-top: 20px;
+               background-color: #fff;
+               border-radius: 8px;
+               overflow: hidden;
+               box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+           }
+           th, td {
+               border: 1px solid #ddd;
+               padding: 10px 8px;
+               text-align: left;
+           }
+           /* Estilo para o cabeçalho da tabela (thead) */
+           thead tr {
+               background-color: #60a5fa; /* Azul da V1 para o cabeçalho */
+               color: white;
+           }
+           th {
+               font-weight: bold;
+               text-transform: uppercase;
+               position: sticky;
+               top: 0;
+               z-index: 1;
+               background-color: #60a5fa; /* Garante que o fundo do cabeçalho seja azul mesmo com sticky */
+               color: white;
+           }
+           /* Estilo específico para os títulos das colunas fixas no thead */
+           /* A coluna "Descrição" agora é a primeira TH */
+           thead th:first-child {
+               background-color: #e0e0e0; /* Cinza da V3 para cabeçalho secundário */
+               color: #333; /* Cor de texto da V3 */
+           }
+  
+  
+           /* A coluna de código foi removida. Ajustei o CSS para a descrição ser a primeira */
+           td.account-descricao { /* Coluna Descrição na tbody */
+               /* REMOVIDO: font-weight: bold; daqui. Agora, o negrito é controlado pelas classes de linha (.conta-sintetica, .conta-calculo) */
+               white-space: nowrap;
+               /* Indentação será aplicada via classes CSS */
+           }
+  
+           /* Classes de indentação */
+           .indent-level-0 { padding-left: 10px; }
+           .indent-level-1 { padding-left: 25px; }
+           .indent-level-2 { padding-left: 40px; }
+           .indent-level-3 { padding-left: 55px; }
+           .indent-level-4 { padding-left: 70px; }
+           .indent-level-5 { padding-left: 85px; }
+  
+           /* Estilos para linhas de contas por tipo (V3) */
+            .conta-sintetica td {
+                font-weight: bold; /* Sintéticas permanecem em negrito */
+            }
+             .conta-analitica {
+                 /* As contas analíticas não terão negrito, pois a regra geral de td.account-descricao foi removida */
+             }
+            .conta-calculo td {
+                font-weight: bold; /* Contas de cálculo (nível 1) em negrito */
+                font-style: italic;
+                border-top: 1px solid #93C5FD; /* Linha acima de contas de cálculo */
+            }
+            /* REMOVIDO: Estilo para contas de último nível (as que não devem ser negrito) */
+            /* .last-level-row td {
+                font-weight: normal !important;
+            } */
+  
+          /* Estilos para células de valor (V3) */
+           .value-cell { /* Células de dados na tbody */
+               text-align: right;
+               white-space: nowrap;
+               font-family: monospace;
+           }
+           .negative-value {
+               color: #d32f2f;
+           }
+  
+           /* Estilo para o seletor de visão (V3) */
+           .view-selector {
+               margin-bottom: 20px;
+               background-color: #fff;
+               padding: 15px;
+               border-radius: 8px;
+               box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+           }
+           .view-selector label {
+               font-weight: bold;
+               margin-right: 10px;
+           }
+           .view-selector select {
+               padding: 8px;
+               border: 1px solid #ccc;
+               border-radius: 4px;
+               font-size: 1rem;
+           }
+  
+           /* Remover estilos de dropdown customizado da V1 que não serão usados */
+           .dropdown-multi { display: none; }
+  
+           /* Container para scrolagem horizontal da tabela (V3) */
+           .table-container {
+               overflow-x: auto;
+               margin-top: 20px;
+           }
+  
+      </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+      <div class="container mx-auto px-4 py-8">
+           <!-- Título principal fora da tabela -->
+           <h1 class="text-2xl font-bold mb-4">Demonstração Financeira Calculada</h1>
+  
+           <!-- Subtítulo para a visão selecionada -->
+           <h2 id="view-title" class="text-xl font-semibold mb-6">Selecione uma Visão para Visualizar...</h2>
+  
+          <div class="flex items-center mb-6 view-selector">
+              <label for="view-select">Selecionar Visão:</label>
+              <select id="view-select"></select>
+          </div>
+  
+           <div class="table-container">
+              <table id="tabela" class="min-w-full bg-white rounded-xl shadow-md border">
+                  <thead>
+                       <!-- A linha de cabeçalho será adicionada pelo JS -->
+                      <tr></tr>
+                  </thead>
+                  <tbody>
+                      <!-- As linhas de dados serão preenchidas via JS -->
+                  </tbody>
+              </table>
+          </div>
+  
+      </div>
+  
+      <script>
+          // Variável que será substituída pelo script Python processar_dados.py
+          const calculatedViewsData = {
     "calculated_views": [
         {
             "plan_name": "SERVISE",
@@ -205,6 +211,7 @@
                     "codigo": "001",
                     "descricao": "Receita Bruta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 11898.82,
                         "2025-02-01 00:00:00": 14062.240000000002,
@@ -219,6 +226,7 @@
                     "codigo": "001.01",
                     "descricao": "Receita sobre Serviços",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 11898.82,
                         "2025-02-01 00:00:00": 14062.240000000002,
@@ -233,6 +241,7 @@
                     "codigo": "001.01.01",
                     "descricao": "Receita de Projetos de Software",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2505.0200000000004,
                         "2025-02-01 00:00:00": 2960.4700000000003,
@@ -247,6 +256,7 @@
                     "codigo": "001.01.01.0001",
                     "descricao": "Desenvolvimento sob demanda",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2505.0200000000004,
                         "2025-02-01 00:00:00": 2960.4700000000003,
@@ -261,6 +271,7 @@
                     "codigo": "001.01.01.0002",
                     "descricao": "Integração de sistemas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -275,6 +286,7 @@
                     "codigo": "001.01.02",
                     "descricao": "Receita de Manutenção e Suporte",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3594.15,
                         "2025-02-01 00:00:00": 4247.63,
@@ -289,6 +301,7 @@
                     "codigo": "001.01.02.0001",
                     "descricao": "Suporte técnico mensal",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 898.54,
                         "2025-02-01 00:00:00": 1061.91,
@@ -303,6 +316,7 @@
                     "codigo": "001.01.02.0002",
                     "descricao": "Atualizações e correções",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2695.61,
                         "2025-02-01 00:00:00": 3185.72,
@@ -317,6 +331,7 @@
                     "codigo": "001.01.03",
                     "descricao": "Receita de Consultoria",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2232.73,
                         "2025-02-01 00:00:00": 2638.6800000000003,
@@ -331,6 +346,7 @@
                     "codigo": "001.01.03.0001",
                     "descricao": "Consultoria técnica",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 54.46,
                         "2025-02-01 00:00:00": 64.36,
@@ -345,6 +361,7 @@
                     "codigo": "001.01.03.0002",
                     "descricao": "Treinamentos e workshops",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2178.27,
                         "2025-02-01 00:00:00": 2574.32,
@@ -359,6 +376,7 @@
                     "codigo": "001.01.04",
                     "descricao": "Receita de Licenciamento",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3566.92,
                         "2025-02-01 00:00:00": 4215.46,
@@ -373,6 +391,7 @@
                     "codigo": "001.01.04.0001",
                     "descricao": "Licença mensal SaaS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1769.85,
                         "2025-02-01 00:00:00": 2091.64,
@@ -387,6 +406,7 @@
                     "codigo": "001.01.04.0002",
                     "descricao": "Licença perpétua",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1797.07,
                         "2025-02-01 00:00:00": 2123.82,
@@ -401,6 +421,7 @@
                     "codigo": "002",
                     "descricao": "Deduções da Receita Bruta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -4198.87,
                         "2025-02-01 00:00:00": -4962.299999999999,
@@ -415,6 +436,7 @@
                     "codigo": "002.01",
                     "descricao": "Impostos sobre Receita",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1294.81,
                         "2025-02-01 00:00:00": -1530.23,
@@ -429,6 +451,7 @@
                     "codigo": "002.01.01",
                     "descricao": "ISS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -18.5,
                         "2025-02-01 00:00:00": -21.86,
@@ -443,6 +466,7 @@
                     "codigo": "002.01.01.0001",
                     "descricao": "ISS sobre serviços locais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -18.5,
                         "2025-02-01 00:00:00": -21.86,
@@ -457,6 +481,7 @@
                     "codigo": "002.01.02",
                     "descricao": "PIS/COFINS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1276.31,
                         "2025-02-01 00:00:00": -1508.3700000000001,
@@ -471,6 +496,7 @@
                     "codigo": "002.01.02.0001",
                     "descricao": "PIS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -850.87,
                         "2025-02-01 00:00:00": -1005.58,
@@ -485,6 +511,7 @@
                     "codigo": "002.01.02.0002",
                     "descricao": "COFINS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -425.44,
                         "2025-02-01 00:00:00": -502.79,
@@ -499,6 +526,7 @@
                     "codigo": "002.02",
                     "descricao": "Devoluções e Descontos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -2904.06,
                         "2025-02-01 00:00:00": -3432.0699999999997,
@@ -513,6 +541,7 @@
                     "codigo": "002.02.01",
                     "descricao": "Descontos concedidos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1183.82,
                         "2025-02-01 00:00:00": -1399.06,
@@ -527,6 +556,7 @@
                     "codigo": "002.02.01.0001",
                     "descricao": "Descontos comerciais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1183.82,
                         "2025-02-01 00:00:00": -1399.06,
@@ -541,6 +571,7 @@
                     "codigo": "002.02.02",
                     "descricao": "Estornos e cancelamentos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1720.24,
                         "2025-02-01 00:00:00": -2033.01,
@@ -555,6 +586,7 @@
                     "codigo": "002.02.02.0001",
                     "descricao": "Estorno de serviços",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1720.24,
                         "2025-02-01 00:00:00": -2033.01,
@@ -568,14 +600,15 @@
                 {
                     "codigo": "003",
                     "descricao": "Receita Líquida",
-                    "tipo": "calculo (001 - 002)",
+                    "tipo": "calculo (001 + 002)",
+                    "formula": "001 + 002",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 7699.95,
+                        "2025-02-01 00:00:00": 9099.940000000002,
+                        "2025-03-01 00:00:00": 8049.919999999998,
+                        "2025-04-01 00:00:00": 5016.629999999999,
+                        "2025-05-01 00:00:00": 8749.940000000002,
+                        "2025-06-01 00:00:00": 5308.289999999999
                     },
                     "nivel": 1
                 },
@@ -583,6 +616,7 @@
                     "codigo": "004",
                     "descricao": "Custos dos Serviços Prestados",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -3237.1800000000003,
                         "2025-02-01 00:00:00": -3825.75,
@@ -597,6 +631,7 @@
                     "codigo": "004.01",
                     "descricao": "Mão de Obra Direta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -3237.1800000000003,
                         "2025-02-01 00:00:00": -3825.75,
@@ -611,6 +646,7 @@
                     "codigo": "004.01.01",
                     "descricao": "Salários técnicos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1623.8600000000001,
                         "2025-02-01 00:00:00": -1919.1100000000001,
@@ -625,6 +661,7 @@
                     "codigo": "004.01.01.0001",
                     "descricao": "Desenvolvedores",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -970.1,
                         "2025-02-01 00:00:00": -1146.48,
@@ -639,6 +676,7 @@
                     "codigo": "004.01.01.0002",
                     "descricao": "Testadores (QA)",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -653.76,
                         "2025-02-01 00:00:00": -772.63,
@@ -653,6 +691,7 @@
                     "codigo": "004.01.02",
                     "descricao": "Encargos e benefícios",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1613.3200000000002,
                         "2025-02-01 00:00:00": -1906.6399999999999,
@@ -667,6 +706,7 @@
                     "codigo": "004.01.02.0001",
                     "descricao": "Encargos sociais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1043.91,
                         "2025-02-01 00:00:00": -1233.71,
@@ -681,6 +721,7 @@
                     "codigo": "004.01.02.0002",
                     "descricao": "Benefícios (VR, VT, etc.)",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -569.41,
                         "2025-02-01 00:00:00": -672.93,
@@ -695,6 +736,7 @@
                     "codigo": "004.02",
                     "descricao": "Infraestrutura Técnica",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -709,6 +751,7 @@
                     "codigo": "004.02.01",
                     "descricao": "Servidores e Cloud",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -723,6 +766,7 @@
                     "codigo": "004.02.01.0001",
                     "descricao": "AWS / Google Cloud",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -737,6 +781,7 @@
                     "codigo": "004.02.02",
                     "descricao": "Licenças de Ferramentas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -751,6 +796,7 @@
                     "codigo": "004.02.02.0001",
                     "descricao": "IDEs e Softwares",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -764,14 +810,15 @@
                 {
                     "codigo": "005",
                     "descricao": "Lucro Bruto",
-                    "tipo": "calculo (003 - 004)",
+                    "tipo": "calculo (003 + 004)",
+                    "formula": "003 + 004",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 4462.7699999999995,
+                        "2025-02-01 00:00:00": 5274.190000000002,
+                        "2025-03-01 00:00:00": 4665.589999999998,
+                        "2025-04-01 00:00:00": 2907.5599999999995,
+                        "2025-05-01 00:00:00": 5071.330000000002,
+                        "2025-06-01 00:00:00": 3076.5899999999992
                     },
                     "nivel": 1
                 },
@@ -779,6 +826,7 @@
                     "codigo": "006",
                     "descricao": "Despesas Operacionais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -687.6600000000001,
                         "2025-02-01 00:00:00": -812.6800000000001,
@@ -793,6 +841,7 @@
                     "codigo": "006.01",
                     "descricao": "Despesas Comerciais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -807,6 +856,7 @@
                     "codigo": "006.01.01",
                     "descricao": "Marketing e Vendas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -821,6 +871,7 @@
                     "codigo": "006.01.01.0001",
                     "descricao": "Anúncios pagos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -835,6 +886,7 @@
                     "codigo": "006.01.01.0002",
                     "descricao": "CRM / Ferramentas de vendas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -849,6 +901,7 @@
                     "codigo": "006.02",
                     "descricao": "Despesas Administrativas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -687.6600000000001,
                         "2025-02-01 00:00:00": -812.6800000000001,
@@ -863,6 +916,7 @@
                     "codigo": "006.02.01",
                     "descricao": "Salários Administrativos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -151.82,
                         "2025-02-01 00:00:00": -179.42,
@@ -877,6 +931,7 @@
                     "codigo": "006.02.01.0001",
                     "descricao": "Equipe administrativa",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -151.82,
                         "2025-02-01 00:00:00": -179.42,
@@ -891,6 +946,7 @@
                     "codigo": "006.02.02",
                     "descricao": "Serviços de Terceiros",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -138.43,
                         "2025-02-01 00:00:00": -163.60000000000002,
@@ -905,6 +961,7 @@
                     "codigo": "006.02.02.0001",
                     "descricao": "Contabilidade",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -116.1,
                         "2025-02-01 00:00:00": -137.21,
@@ -919,6 +976,7 @@
                     "codigo": "006.02.02.0002",
                     "descricao": "Jurídico",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -22.33,
                         "2025-02-01 00:00:00": -26.39,
@@ -933,6 +991,7 @@
                     "codigo": "006.02.03",
                     "descricao": "Despesas Gerais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -397.41,
                         "2025-02-01 00:00:00": -469.66,
@@ -947,6 +1006,7 @@
                     "codigo": "006.02.03.0001",
                     "descricao": "Aluguel e Condomínio",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -71.44,
                         "2025-02-01 00:00:00": -84.43,
@@ -961,6 +1021,7 @@
                     "codigo": "006.02.03.0002",
                     "descricao": "Internet e Telefonia",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -325.97,
                         "2025-02-01 00:00:00": -385.23,
@@ -974,14 +1035,15 @@
                 {
                     "codigo": "007",
                     "descricao": "Resultado Operacional",
-                    "tipo": "calculo (005 - 006)",
+                    "tipo": "calculo (005 + 006)",
+                    "formula": "005 + 006",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 },
@@ -989,6 +1051,7 @@
                     "codigo": "008",
                     "descricao": "Outras Receitas e Despesas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1003,6 +1066,7 @@
                     "codigo": "008.01",
                     "descricao": "Outras Receitas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1017,6 +1081,7 @@
                     "codigo": "008.01.01",
                     "descricao": "Receitas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1031,6 +1096,7 @@
                     "codigo": "008.01.01.0001",
                     "descricao": "Rendimentos de aplicação",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1045,6 +1111,7 @@
                     "codigo": "008.02",
                     "descricao": "Outras Despesas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1059,6 +1126,7 @@
                     "codigo": "008.02.01",
                     "descricao": "Despesas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1073,6 +1141,7 @@
                     "codigo": "008.02.01.0001",
                     "descricao": "Juros bancários",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1086,14 +1155,15 @@
                 {
                     "codigo": "009",
                     "descricao": "Resultado Antes do IR e CSLL",
-                    "tipo": "calculo (007 - 008)",
+                    "tipo": "calculo (007 + 008)",
+                    "formula": "007 + 008",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 },
@@ -1101,6 +1171,7 @@
                     "codigo": "010",
                     "descricao": "IR e CSLL",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1115,6 +1186,7 @@
                     "codigo": "010.01",
                     "descricao": "Imposto de Renda",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1129,6 +1201,7 @@
                     "codigo": "010.01.01",
                     "descricao": "IRPJ",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1143,6 +1216,7 @@
                     "codigo": "010.01.01.0001",
                     "descricao": "Lucro presumido/real",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1157,6 +1231,7 @@
                     "codigo": "010.02",
                     "descricao": "Contribuição Social",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1171,6 +1246,7 @@
                     "codigo": "010.02.01",
                     "descricao": "CSLL",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1185,6 +1261,7 @@
                     "codigo": "010.02.01.0001",
                     "descricao": "Cálculo sobre lucro",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1198,14 +1275,15 @@
                 {
                     "codigo": "011",
                     "descricao": "Resultado Líquido do Exercício",
-                    "tipo": "calculo (009 - 010)",
+                    "tipo": "calculo (009 + 010)",
+                    "formula": "009 + 010",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 }
@@ -1227,6 +1305,7 @@
                     "codigo": "001",
                     "descricao": "Receita Bruta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 11898.82,
                         "2025-02-01 00:00:00": 14062.240000000002,
@@ -1241,6 +1320,7 @@
                     "codigo": "001.01",
                     "descricao": "Receita sobre Serviços",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 11898.82,
                         "2025-02-01 00:00:00": 14062.240000000002,
@@ -1255,6 +1335,7 @@
                     "codigo": "001.01.01",
                     "descricao": "Receita de Projetos de Software",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2505.0200000000004,
                         "2025-02-01 00:00:00": 2960.4700000000003,
@@ -1269,6 +1350,7 @@
                     "codigo": "001.01.01.0001",
                     "descricao": "Desenvolvimento sob demanda",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1415.88,
                         "2025-02-01 00:00:00": 1673.31,
@@ -1283,6 +1365,7 @@
                     "codigo": "001.01.01.0002",
                     "descricao": "Integração de sistemas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1089.14,
                         "2025-02-01 00:00:00": 1287.16,
@@ -1297,6 +1380,7 @@
                     "codigo": "001.01.02",
                     "descricao": "Receita de Manutenção e Suporte",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3594.15,
                         "2025-02-01 00:00:00": 4247.63,
@@ -1311,6 +1395,7 @@
                     "codigo": "001.01.02.0001",
                     "descricao": "Suporte técnico mensal",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 898.54,
                         "2025-02-01 00:00:00": 1061.91,
@@ -1325,6 +1410,7 @@
                     "codigo": "001.01.02.0002",
                     "descricao": "Atualizações e correções",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2695.61,
                         "2025-02-01 00:00:00": 3185.72,
@@ -1339,6 +1425,7 @@
                     "codigo": "001.01.03",
                     "descricao": "Receita de Consultoria",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2232.73,
                         "2025-02-01 00:00:00": 2638.6800000000003,
@@ -1353,6 +1440,7 @@
                     "codigo": "001.01.03.0001",
                     "descricao": "Consultoria técnica",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 54.46,
                         "2025-02-01 00:00:00": 64.36,
@@ -1367,6 +1455,7 @@
                     "codigo": "001.01.03.0002",
                     "descricao": "Treinamentos e workshops",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2178.27,
                         "2025-02-01 00:00:00": 2574.32,
@@ -1381,6 +1470,7 @@
                     "codigo": "001.01.04",
                     "descricao": "Receita de Licenciamento",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3566.92,
                         "2025-02-01 00:00:00": 4215.46,
@@ -1395,6 +1485,7 @@
                     "codigo": "001.01.04.0001",
                     "descricao": "Licença mensal SaaS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1769.85,
                         "2025-02-01 00:00:00": 2091.64,
@@ -1409,6 +1500,7 @@
                     "codigo": "001.01.04.0002",
                     "descricao": "Licença perpétua",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1797.07,
                         "2025-02-01 00:00:00": 2123.82,
@@ -1423,6 +1515,7 @@
                     "codigo": "002",
                     "descricao": "Deduções da Receita Bruta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -4198.87,
                         "2025-02-01 00:00:00": -4962.299999999999,
@@ -1437,6 +1530,7 @@
                     "codigo": "002.01",
                     "descricao": "Impostos sobre Receita",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1294.81,
                         "2025-02-01 00:00:00": -1530.23,
@@ -1451,6 +1545,7 @@
                     "codigo": "002.01.01",
                     "descricao": "ISS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -18.5,
                         "2025-02-01 00:00:00": -21.86,
@@ -1465,6 +1560,7 @@
                     "codigo": "002.01.01.0001",
                     "descricao": "ISS sobre serviços locais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -18.5,
                         "2025-02-01 00:00:00": -21.86,
@@ -1479,6 +1575,7 @@
                     "codigo": "002.01.02",
                     "descricao": "PIS/COFINS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1276.31,
                         "2025-02-01 00:00:00": -1508.3700000000001,
@@ -1493,6 +1590,7 @@
                     "codigo": "002.01.02.0001",
                     "descricao": "PIS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -850.87,
                         "2025-02-01 00:00:00": -1005.58,
@@ -1507,6 +1605,7 @@
                     "codigo": "002.01.02.0002",
                     "descricao": "COFINS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -425.44,
                         "2025-02-01 00:00:00": -502.79,
@@ -1521,6 +1620,7 @@
                     "codigo": "002.02",
                     "descricao": "Devoluções e Descontos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -2904.06,
                         "2025-02-01 00:00:00": -3432.0699999999997,
@@ -1535,6 +1635,7 @@
                     "codigo": "002.02.01",
                     "descricao": "Descontos concedidos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1183.82,
                         "2025-02-01 00:00:00": -1399.06,
@@ -1549,6 +1650,7 @@
                     "codigo": "002.02.01.0001",
                     "descricao": "Descontos comerciais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1183.82,
                         "2025-02-01 00:00:00": -1399.06,
@@ -1563,6 +1665,7 @@
                     "codigo": "002.02.02",
                     "descricao": "Estornos e cancelamentos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1720.24,
                         "2025-02-01 00:00:00": -2033.01,
@@ -1577,6 +1680,7 @@
                     "codigo": "002.02.02.0001",
                     "descricao": "Estorno de serviços",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1720.24,
                         "2025-02-01 00:00:00": -2033.01,
@@ -1590,14 +1694,15 @@
                 {
                     "codigo": "003",
                     "descricao": "Receita Líquida",
-                    "tipo": "calculo (001 - 002)",
+                    "tipo": "calculo (001 + 002)",
+                    "formula": "001 + 002",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 7699.95,
+                        "2025-02-01 00:00:00": 9099.940000000002,
+                        "2025-03-01 00:00:00": 8049.919999999998,
+                        "2025-04-01 00:00:00": 5016.629999999999,
+                        "2025-05-01 00:00:00": 8749.940000000002,
+                        "2025-06-01 00:00:00": 5308.289999999999
                     },
                     "nivel": 1
                 },
@@ -1605,6 +1710,7 @@
                     "codigo": "004",
                     "descricao": "Custos dos Serviços Prestados",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -3237.1800000000003,
                         "2025-02-01 00:00:00": -3825.75,
@@ -1619,6 +1725,7 @@
                     "codigo": "004.01",
                     "descricao": "Mão de Obra Direta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -3237.1800000000003,
                         "2025-02-01 00:00:00": -3825.75,
@@ -1633,6 +1740,7 @@
                     "codigo": "004.01.01",
                     "descricao": "Salários técnicos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1623.8600000000001,
                         "2025-02-01 00:00:00": -1919.1100000000001,
@@ -1647,6 +1755,7 @@
                     "codigo": "004.01.01.0001",
                     "descricao": "Desenvolvedores",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -970.1,
                         "2025-02-01 00:00:00": -1146.48,
@@ -1661,6 +1770,7 @@
                     "codigo": "004.01.01.0002",
                     "descricao": "Testadores (QA)",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -653.76,
                         "2025-02-01 00:00:00": -772.63,
@@ -1675,6 +1785,7 @@
                     "codigo": "004.01.02",
                     "descricao": "Encargos e benefícios",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1613.3200000000002,
                         "2025-02-01 00:00:00": -1906.6399999999999,
@@ -1689,6 +1800,7 @@
                     "codigo": "004.01.02.0001",
                     "descricao": "Encargos sociais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1043.91,
                         "2025-02-01 00:00:00": -1233.71,
@@ -1703,6 +1815,7 @@
                     "codigo": "004.01.02.0002",
                     "descricao": "Benefícios (VR, VT, etc.)",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -569.41,
                         "2025-02-01 00:00:00": -672.93,
@@ -1717,6 +1830,7 @@
                     "codigo": "004.02",
                     "descricao": "Infraestrutura Técnica",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1731,6 +1845,7 @@
                     "codigo": "004.02.01",
                     "descricao": "Servidores e Cloud",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1745,6 +1860,7 @@
                     "codigo": "004.02.01.0001",
                     "descricao": "AWS / Google Cloud",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1759,6 +1875,7 @@
                     "codigo": "004.02.02",
                     "descricao": "Licenças de Ferramentas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1773,6 +1890,7 @@
                     "codigo": "004.02.02.0001",
                     "descricao": "IDEs e Softwares",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1786,14 +1904,15 @@
                 {
                     "codigo": "005",
                     "descricao": "Lucro Bruto",
-                    "tipo": "calculo (003 - 004)",
+                    "tipo": "calculo (003 + 004)",
+                    "formula": "003 + 004",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 4462.7699999999995,
+                        "2025-02-01 00:00:00": 5274.190000000002,
+                        "2025-03-01 00:00:00": 4665.589999999998,
+                        "2025-04-01 00:00:00": 2907.5599999999995,
+                        "2025-05-01 00:00:00": 5071.330000000002,
+                        "2025-06-01 00:00:00": 3076.5899999999992
                     },
                     "nivel": 1
                 },
@@ -1801,6 +1920,7 @@
                     "codigo": "006",
                     "descricao": "Despesas Operacionais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -687.6600000000001,
                         "2025-02-01 00:00:00": -812.6800000000001,
@@ -1815,6 +1935,7 @@
                     "codigo": "006.01",
                     "descricao": "Despesas Comerciais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1829,6 +1950,7 @@
                     "codigo": "006.01.01",
                     "descricao": "Marketing e Vendas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1843,6 +1965,7 @@
                     "codigo": "006.01.01.0001",
                     "descricao": "Anúncios pagos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1857,6 +1980,7 @@
                     "codigo": "006.01.01.0002",
                     "descricao": "CRM / Ferramentas de vendas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -1871,6 +1995,7 @@
                     "codigo": "006.02",
                     "descricao": "Despesas Administrativas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -687.6600000000001,
                         "2025-02-01 00:00:00": -812.6800000000001,
@@ -1885,6 +2010,7 @@
                     "codigo": "006.02.01",
                     "descricao": "Salários Administrativos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -151.82,
                         "2025-02-01 00:00:00": -179.42,
@@ -1899,6 +2025,7 @@
                     "codigo": "006.02.01.0001",
                     "descricao": "Equipe administrativa",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -151.82,
                         "2025-02-01 00:00:00": -179.42,
@@ -1913,6 +2040,7 @@
                     "codigo": "006.02.02",
                     "descricao": "Serviços de Terceiros",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -138.43,
                         "2025-02-01 00:00:00": -163.60000000000002,
@@ -1927,6 +2055,7 @@
                     "codigo": "006.02.02.0001",
                     "descricao": "Contabilidade",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -116.1,
                         "2025-02-01 00:00:00": -137.21,
@@ -1941,6 +2070,7 @@
                     "codigo": "006.02.02.0002",
                     "descricao": "Jurídico",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -22.33,
                         "2025-02-01 00:00:00": -26.39,
@@ -1955,6 +2085,7 @@
                     "codigo": "006.02.03",
                     "descricao": "Despesas Gerais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -397.41,
                         "2025-02-01 00:00:00": -469.66,
@@ -1969,6 +2100,7 @@
                     "codigo": "006.02.03.0001",
                     "descricao": "Aluguel e Condomínio",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -71.44,
                         "2025-02-01 00:00:00": -84.43,
@@ -1983,6 +2115,7 @@
                     "codigo": "006.02.03.0002",
                     "descricao": "Internet e Telefonia",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -325.97,
                         "2025-02-01 00:00:00": -385.23,
@@ -1996,14 +2129,15 @@
                 {
                     "codigo": "007",
                     "descricao": "Resultado Operacional",
-                    "tipo": "calculo (005 - 006)",
+                    "tipo": "calculo (005 + 006)",
+                    "formula": "005 + 006",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 },
@@ -2011,6 +2145,7 @@
                     "codigo": "008",
                     "descricao": "Outras Receitas e Despesas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2025,6 +2160,7 @@
                     "codigo": "008.01",
                     "descricao": "Outras Receitas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2039,6 +2175,7 @@
                     "codigo": "008.01.01",
                     "descricao": "Receitas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2053,6 +2190,7 @@
                     "codigo": "008.01.01.0001",
                     "descricao": "Rendimentos de aplicação",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2067,6 +2205,7 @@
                     "codigo": "008.02",
                     "descricao": "Outras Despesas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2081,6 +2220,7 @@
                     "codigo": "008.02.01",
                     "descricao": "Despesas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2095,6 +2235,7 @@
                     "codigo": "008.02.01.0001",
                     "descricao": "Juros bancários",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2108,14 +2249,15 @@
                 {
                     "codigo": "009",
                     "descricao": "Resultado Antes do IR e CSLL",
-                    "tipo": "calculo (007 - 008)",
+                    "tipo": "calculo (007 + 008)",
+                    "formula": "007 + 008",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 },
@@ -2123,6 +2265,7 @@
                     "codigo": "010",
                     "descricao": "IR e CSLL",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2137,6 +2280,7 @@
                     "codigo": "010.01",
                     "descricao": "Imposto de Renda",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2151,6 +2295,7 @@
                     "codigo": "010.01.01",
                     "descricao": "IRPJ",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2165,6 +2310,7 @@
                     "codigo": "010.01.01.0001",
                     "descricao": "Lucro presumido/real",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2179,6 +2325,7 @@
                     "codigo": "010.02",
                     "descricao": "Contribuição Social",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2193,6 +2340,7 @@
                     "codigo": "010.02.01",
                     "descricao": "CSLL",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2207,6 +2355,7 @@
                     "codigo": "010.02.01.0001",
                     "descricao": "Cálculo sobre lucro",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2220,14 +2369,15 @@
                 {
                     "codigo": "011",
                     "descricao": "Resultado Líquido do Exercício",
-                    "tipo": "calculo (009 - 010)",
+                    "tipo": "calculo (009 + 010)",
+                    "formula": "009 + 010",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 3775.1099999999997,
+                        "2025-02-01 00:00:00": 4461.510000000002,
+                        "2025-03-01 00:00:00": 3946.6899999999982,
+                        "2025-04-01 00:00:00": 2459.5399999999995,
+                        "2025-05-01 00:00:00": 4289.9000000000015,
+                        "2025-06-01 00:00:00": 2602.5299999999993
                     },
                     "nivel": 1
                 }
@@ -2249,6 +2399,7 @@
                     "codigo": "001",
                     "descricao": "Receita Bruta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 13961.57,
                         "2025-02-01 00:00:00": 9421.240000000002,
@@ -2263,6 +2414,7 @@
                     "codigo": "001.01",
                     "descricao": "Receita com Produtos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 12282.41,
                         "2025-02-01 00:00:00": 8288.150000000001,
@@ -2277,6 +2429,7 @@
                     "codigo": "001.01.01",
                     "descricao": "Venda de Pães",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3528.13,
                         "2025-02-01 00:00:00": 2380.7700000000004,
@@ -2291,6 +2444,7 @@
                     "codigo": "001.01.01.0001",
                     "descricao": "Pães tradicionais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 56.6,
                         "2025-02-01 00:00:00": 38.19,
@@ -2305,6 +2459,7 @@
                     "codigo": "001.01.01.0002",
                     "descricao": "Pães especiais e integrais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1641.43,
                         "2025-02-01 00:00:00": 1107.63,
@@ -2319,6 +2474,7 @@
                     "codigo": "001.01.01.0003",
                     "descricao": "Pães recheados",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1830.1,
                         "2025-02-01 00:00:00": 1234.95,
@@ -2333,6 +2489,7 @@
                     "codigo": "001.01.02",
                     "descricao": "Venda de Bolos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2207.44,
                         "2025-02-01 00:00:00": 1489.58,
@@ -2347,6 +2504,7 @@
                     "codigo": "001.01.02.0001",
                     "descricao": "Bolos simples",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1339.56,
                         "2025-02-01 00:00:00": 903.93,
@@ -2361,6 +2519,7 @@
                     "codigo": "001.01.02.0002",
                     "descricao": "Bolos recheados",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 113.2,
                         "2025-02-01 00:00:00": 76.39,
@@ -2375,6 +2534,7 @@
                     "codigo": "001.01.02.0003",
                     "descricao": "Bolos personalizados por encomenda",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 754.68,
                         "2025-02-01 00:00:00": 509.26,
@@ -2389,6 +2549,7 @@
                     "codigo": "001.01.03",
                     "descricao": "Venda de Salgados",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 2773.45,
                         "2025-02-01 00:00:00": 1871.52,
@@ -2403,6 +2564,7 @@
                     "codigo": "001.01.03.0001",
                     "descricao": "Coxinhas, empadas e esfihas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1698.03,
                         "2025-02-01 00:00:00": 1145.83,
@@ -2417,6 +2579,7 @@
                     "codigo": "001.01.03.0002",
                     "descricao": "Quiches e tortas salgadas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1075.42,
                         "2025-02-01 00:00:00": 725.69,
@@ -2431,6 +2594,7 @@
                     "codigo": "001.01.04",
                     "descricao": "Venda de Doces",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 660.34,
                         "2025-02-01 00:00:00": 445.59999999999997,
@@ -2445,6 +2609,7 @@
                     "codigo": "001.01.04.0001",
                     "descricao": "Brigadeiros, beijinhos, cajuzinhos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 169.8,
                         "2025-02-01 00:00:00": 114.58,
@@ -2459,6 +2624,7 @@
                     "codigo": "001.01.04.0002",
                     "descricao": "Tortas doces e sobremesas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 490.54,
                         "2025-02-01 00:00:00": 331.02,
@@ -2473,6 +2639,7 @@
                     "codigo": "001.01.05",
                     "descricao": "Venda de Bebidas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 3113.0499999999997,
                         "2025-02-01 00:00:00": 2100.6800000000003,
@@ -2487,6 +2654,7 @@
                     "codigo": "001.01.05.0001",
                     "descricao": "Café e chás",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 735.81,
                         "2025-02-01 00:00:00": 496.52,
@@ -2501,6 +2669,7 @@
                     "codigo": "001.01.05.0002",
                     "descricao": "Sucos e refrigerantes",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 792.41,
                         "2025-02-01 00:00:00": 534.72,
@@ -2515,6 +2684,7 @@
                     "codigo": "001.01.05.0003",
                     "descricao": "Água mineral",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1584.83,
                         "2025-02-01 00:00:00": 1069.44,
@@ -2529,6 +2699,7 @@
                     "codigo": "001.02",
                     "descricao": "Receita com Serviços",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1679.16,
                         "2025-02-01 00:00:00": 1133.09,
@@ -2543,6 +2714,7 @@
                     "codigo": "001.02.01",
                     "descricao": "Encomendas para eventos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1679.16,
                         "2025-02-01 00:00:00": 1133.09,
@@ -2557,6 +2729,7 @@
                     "codigo": "001.02.01.0001",
                     "descricao": "Buffet de café da manhã",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 433.94,
                         "2025-02-01 00:00:00": 292.82,
@@ -2571,6 +2744,7 @@
                     "codigo": "001.02.01.0002",
                     "descricao": "Aniversários e confraternizações",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 1245.22,
                         "2025-02-01 00:00:00": 840.27,
@@ -2585,6 +2759,7 @@
                     "codigo": "001.02.02",
                     "descricao": "Aluguel de espaço para festas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2599,6 +2774,7 @@
                     "codigo": "002",
                     "descricao": "Deduções da Receita",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -4664.98,
                         "2025-02-01 00:00:00": -3147.92,
@@ -2613,6 +2789,7 @@
                     "codigo": "002.01",
                     "descricao": "Impostos sobre Receita",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -3490.69,
                         "2025-02-01 00:00:00": -2355.51,
@@ -2627,6 +2804,7 @@
                     "codigo": "002.01.01",
                     "descricao": "ICMS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1270.81,
                         "2025-02-01 00:00:00": -857.54,
@@ -2641,6 +2819,7 @@
                     "codigo": "002.01.01.0001",
                     "descricao": "ICMS sobre vendas de produtos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1270.81,
                         "2025-02-01 00:00:00": -857.54,
@@ -2655,6 +2834,7 @@
                     "codigo": "002.01.02",
                     "descricao": "PIS/COFINS",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -2219.88,
                         "2025-02-01 00:00:00": -1497.97,
@@ -2669,6 +2849,7 @@
                     "codigo": "002.01.02.0001",
                     "descricao": "PIS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -820.39,
                         "2025-02-01 00:00:00": -553.6,
@@ -2683,6 +2864,7 @@
                     "codigo": "002.01.02.0002",
                     "descricao": "COFINS",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1399.49,
                         "2025-02-01 00:00:00": -944.37,
@@ -2697,6 +2879,7 @@
                     "codigo": "002.02",
                     "descricao": "Descontos e Devoluções",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1174.29,
                         "2025-02-01 00:00:00": -792.41,
@@ -2711,6 +2894,7 @@
                     "codigo": "002.02.01",
                     "descricao": "Descontos promocionais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1174.29,
                         "2025-02-01 00:00:00": -792.41,
@@ -2725,6 +2909,7 @@
                     "codigo": "002.02.01.0001",
                     "descricao": "Descontos à vista",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -1174.29,
                         "2025-02-01 00:00:00": -792.41,
@@ -2739,6 +2924,7 @@
                     "codigo": "002.02.02",
                     "descricao": "Cancelamentos e trocas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2752,14 +2938,15 @@
                 {
                     "codigo": "003",
                     "descricao": "Receita Líquida",
-                    "tipo": "calculo (001 - 002)",
+                    "tipo": "calculo (001 + 002)",
+                    "formula": "001 + 002",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 9296.59,
+                        "2025-02-01 00:00:00": 6273.3200000000015,
+                        "2025-03-01 00:00:00": 9296.59,
+                        "2025-04-01 00:00:00": 6348.9,
+                        "2025-05-01 00:00:00": 11866.399999999998,
+                        "2025-06-01 00:00:00": 10505.920000000002
                     },
                     "nivel": 1
                 },
@@ -2767,6 +2954,7 @@
                     "codigo": "004",
                     "descricao": "Custo das Mercadorias Vendidas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2781,6 +2969,7 @@
                     "codigo": "004.01",
                     "descricao": "Matéria-Prima",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2795,6 +2984,7 @@
                     "codigo": "004.01.01",
                     "descricao": "Farinha, fermento e ovos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2809,6 +2999,7 @@
                     "codigo": "004.01.01.001",
                     "descricao": "Farinha, fermento e ovos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2823,6 +3014,7 @@
                     "codigo": "004.01.02",
                     "descricao": "Leite, manteiga e derivados",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2837,6 +3029,7 @@
                     "codigo": "004.01.02.001",
                     "descricao": "Leite, manteiga e derivados",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2851,6 +3044,7 @@
                     "codigo": "004.01.03",
                     "descricao": "Açúcar, chocolate, frutas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2865,6 +3059,7 @@
                     "codigo": "004.01.03.001",
                     "descricao": "Açúcar, chocolate, frutas",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2879,6 +3074,7 @@
                     "codigo": "004.01.04",
                     "descricao": "Embalagens e descartáveis",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2893,6 +3089,7 @@
                     "codigo": "004.01.04.001",
                     "descricao": "Embalagens e descartáveis",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2907,6 +3104,7 @@
                     "codigo": "004.02",
                     "descricao": "Mão de Obra Direta",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2921,6 +3119,7 @@
                     "codigo": "004.02.01",
                     "descricao": "Padeiros e confeiteiros",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2935,6 +3134,7 @@
                     "codigo": "004.02.01.001",
                     "descricao": "Padeiros e confeiteiros",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2949,6 +3149,7 @@
                     "codigo": "004.02.02",
                     "descricao": "Auxiliares de produção",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2963,6 +3164,7 @@
                     "codigo": "004.02.02.001",
                     "descricao": "Auxiliares de produção",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2977,6 +3179,7 @@
                     "codigo": "004.03",
                     "descricao": "Energia e Consumo",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -2991,6 +3194,7 @@
                     "codigo": "004.03.01",
                     "descricao": "Energia elétrica - produção",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3005,6 +3209,7 @@
                     "codigo": "004.03.01.001",
                     "descricao": "Energia elétrica - produção",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3019,6 +3224,7 @@
                     "codigo": "004.03.02",
                     "descricao": "Gás de cozinha",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3033,6 +3239,7 @@
                     "codigo": "004.03.02.001",
                     "descricao": "Gás de cozinha",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3046,14 +3253,15 @@
                 {
                     "codigo": "005",
                     "descricao": "Lucro Bruto",
-                    "tipo": "calculo (003 - 004)",
+                    "tipo": "calculo (003 + 004)",
+                    "formula": "003 + 004",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 9296.59,
+                        "2025-02-01 00:00:00": 6273.3200000000015,
+                        "2025-03-01 00:00:00": 9296.59,
+                        "2025-04-01 00:00:00": 6348.9,
+                        "2025-05-01 00:00:00": 11866.399999999998,
+                        "2025-06-01 00:00:00": 10505.920000000002
                     },
                     "nivel": 1
                 },
@@ -3061,6 +3269,7 @@
                     "codigo": "006",
                     "descricao": "Despesas Operacionais",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -833.76,
                         "2025-02-01 00:00:00": -562.62,
@@ -3075,6 +3284,7 @@
                     "codigo": "006.01",
                     "descricao": "Despesas com Vendas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3089,6 +3299,7 @@
                     "codigo": "006.01.01",
                     "descricao": "Comissão de vendedores",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3103,6 +3314,7 @@
                     "codigo": "006.01.02",
                     "descricao": "Publicidade e Propaganda",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3117,6 +3329,7 @@
                     "codigo": "006.01.02.0001",
                     "descricao": "Cartazes, panfletos e redes sociais",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3131,6 +3344,7 @@
                     "codigo": "006.02",
                     "descricao": "Despesas Administrativas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -833.76,
                         "2025-02-01 00:00:00": -562.62,
@@ -3145,6 +3359,7 @@
                     "codigo": "006.02.01",
                     "descricao": "Salários administrativos",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3159,6 +3374,7 @@
                     "codigo": "006.02.02",
                     "descricao": "Serviços de terceiros",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -277.92,
                         "2025-02-01 00:00:00": -187.54,
@@ -3173,6 +3389,7 @@
                     "codigo": "006.02.02.0001",
                     "descricao": "Contabilidade",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -224.29,
                         "2025-02-01 00:00:00": -151.35,
@@ -3187,6 +3404,7 @@
                     "codigo": "006.02.02.0002",
                     "descricao": "Manutenção de equipamentos",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -53.63,
                         "2025-02-01 00:00:00": -36.19,
@@ -3201,6 +3419,7 @@
                     "codigo": "006.02.03",
                     "descricao": "Despesas com infraestrutura",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -555.84,
                         "2025-02-01 00:00:00": -375.08000000000004,
@@ -3215,6 +3434,7 @@
                     "codigo": "006.02.03.0001",
                     "descricao": "Aluguel e condomínio",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -160.9,
                         "2025-02-01 00:00:00": -108.58,
@@ -3229,6 +3449,7 @@
                     "codigo": "006.02.03.0002",
                     "descricao": "Água, luz e telefone",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -92.64,
                         "2025-02-01 00:00:00": -62.51,
@@ -3243,6 +3464,7 @@
                     "codigo": "006.02.03.0003",
                     "descricao": "Materiais de limpeza",
                     "tipo": "analitica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": -302.3,
                         "2025-02-01 00:00:00": -203.99,
@@ -3257,6 +3479,7 @@
                     "codigo": "006.03",
                     "descricao": "Despesas com Logística",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3271,6 +3494,7 @@
                     "codigo": "006.03.01",
                     "descricao": "Entrega de encomendas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3285,6 +3509,7 @@
                     "codigo": "006.03.02",
                     "descricao": "Combustível para transporte",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3298,14 +3523,15 @@
                 {
                     "codigo": "007",
                     "descricao": "Resultado Operacional",
-                    "tipo": "calculo (005 - 006)",
+                    "tipo": "calculo (005 + 006)",
+                    "formula": "005 + 006",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 8462.83,
+                        "2025-02-01 00:00:00": 5710.700000000002,
+                        "2025-03-01 00:00:00": 8462.83,
+                        "2025-04-01 00:00:00": 5779.5,
+                        "2025-05-01 00:00:00": 10802.169999999998,
+                        "2025-06-01 00:00:00": 9563.710000000003
                     },
                     "nivel": 1
                 },
@@ -3313,6 +3539,7 @@
                     "codigo": "008",
                     "descricao": "Outras Receitas e Despesas",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3327,6 +3554,7 @@
                     "codigo": "008.01",
                     "descricao": "Receitas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3341,6 +3569,7 @@
                     "codigo": "008.01.01",
                     "descricao": "Rendimento de aplicações",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3355,6 +3584,7 @@
                     "codigo": "008.02",
                     "descricao": "Despesas Financeiras",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3369,6 +3599,7 @@
                     "codigo": "008.02.01",
                     "descricao": "Tarifas bancárias e juros",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3382,14 +3613,15 @@
                 {
                     "codigo": "009",
                     "descricao": "Resultado Antes do IR e CSLL",
-                    "tipo": "calculo (007 - 008)",
+                    "tipo": "calculo (007 + 008)",
+                    "formula": "007 + 008",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 8462.83,
+                        "2025-02-01 00:00:00": 5710.700000000002,
+                        "2025-03-01 00:00:00": 8462.83,
+                        "2025-04-01 00:00:00": 5779.5,
+                        "2025-05-01 00:00:00": 10802.169999999998,
+                        "2025-06-01 00:00:00": 9563.710000000003
                     },
                     "nivel": 1
                 },
@@ -3397,6 +3629,7 @@
                     "codigo": "010",
                     "descricao": "Impostos sobre o Lucro",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3411,6 +3644,7 @@
                     "codigo": "010.01",
                     "descricao": "IRPJ",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3425,6 +3659,7 @@
                     "codigo": "010.02",
                     "descricao": "CSLL",
                     "tipo": "sintetica",
+                    "formula": null,
                     "valores": {
                         "2025-01-01 00:00:00": 0.0,
                         "2025-02-01 00:00:00": 0.0,
@@ -3438,373 +3673,387 @@
                 {
                     "codigo": "011",
                     "descricao": "Resultado Líquido do Exercício",
-                    "tipo": "calculo (009 - 010)",
+                    "tipo": "calculo (009 + 010)",
+                    "formula": "009 + 010",
                     "valores": {
-                        "2025-01-01 00:00:00": 0.0,
-                        "2025-02-01 00:00:00": 0.0,
-                        "2025-03-01 00:00:00": 0.0,
-                        "2025-04-01 00:00:00": 0.0,
-                        "2025-05-01 00:00:00": 0.0,
-                        "2025-06-01 00:00:00": 0.0
+                        "2025-01-01 00:00:00": 8462.83,
+                        "2025-02-01 00:00:00": 5710.700000000002,
+                        "2025-03-01 00:00:00": 8462.83,
+                        "2025-04-01 00:00:00": 5779.5,
+                        "2025-05-01 00:00:00": 10802.169999999998,
+                        "2025-06-01 00:00:00": 9563.710000000003
                     },
                     "nivel": 1
                 }
             ]
         }
     ],
-    "timestamp_utc": "2025-06-20T18:17:11.766292Z",
-    "timestamp_local": "2025-06-20T15:17:11.766292-03:00"
+    "timestamp_utc": "2025-06-21T02:12:52.656745Z",
+    "timestamp_local": "2025-06-20T23:12:52.656745-03:00"
 };
-
-        // Obtém referências para os elementos HTML
-        const viewSelect = document.getElementById('view-select');
-        const viewTitle = document.getElementById('view-title');
-        const tabela = document.getElementById('tabela');
-        const thead = tabela.querySelector('thead');
-        const tbody = tabela.querySelector('tbody');
-
-        // --- Variáveis de estado para seleção ---
-        let lastSelectedCell = null;
-        let isMouseDown = false;
-        let startCell = null;
-
-        // --- Funções de Formatação e Utilitários ---
-        function formatCurrency(value) {
-             if (typeof value !== 'number' || isNaN(value) || value === null) {
-                 return '-';
-             }
-             try {
-                  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-             } catch (e) {
-                  console.error("Erro formatando moeda:", value, e);
-                  return String(value);
-             }
-         }
-
-         function formatPeriodHeader(periodString) {
-              try {
-                  const date = new Date(periodString);
-                  if (!isNaN(date)) {
-                      return date.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
-                  }
-              } catch (e) {
-                  console.warn(`Não foi possível formatar o período '${periodString}' como data. Usando string original.`);
-              }
-              return String(periodString).trim();
-         }
-
-         function getIndentClass(level) {
-              if (typeof level !== 'number' || isNaN(level) || level < 1) return 'indent-level-0';
-              return `indent-level-${Math.max(0, level - 1)}`;
-         }
-
-        // --- Funções de Interação da Tabela ---
-
-         function getCellPosition(cell) {
-             return {
-                 row: parseInt(cell.getAttribute('data-row')),
-                 col: parseInt(cell.getAttribute('data-col'))
-             };
-         }
-
-         function selectCellsInRange(start, end) {
-             const allCells = tabela.querySelectorAll('.planilha-valor');
-             allCells.forEach(cell => {
-                 const { row, col } = getCellPosition(cell);
-                 const inRowRange = row >= Math.min(start.row, end.row) && row <= Math.max(start.row, end.row);
-                 const inColRange = col >= Math.min(start.col, end.col) && col <= Math.max(start.col, end.col);
-                 cell.classList.toggle('cell-selecionada', inRowRange && inColRange);
-             });
-         }
-
-         function clearSelection() {
-             tabela.querySelectorAll('.cell-selecionada').forEach(cell => cell.classList.remove('cell-selecionada'));
-             thead.querySelectorAll('.cabecalho-selecionado').forEach(th => th.classList.remove('cabecalho-selecionado'));
-             tbody.querySelectorAll('.indicador-selecionado').forEach(td => td.classList.remove('indicador-selecionado'));
-         }
-
-
-        // --- Função Principal para Renderizar a Tabela ---
-
-        function renderTable(viewIndex) {
-             // Limpa cabeçalho e corpo atuais da tabela
-             thead.innerHTML = '';
-             tbody.innerHTML = '';
-             viewTitle.textContent = 'Selecione uma Visão para Visualizar...';
-
-             // Verifica se o índice da visão é válido
-             if (viewIndex === "" || !calculatedViewsData || !calculatedViewsData.calculated_views || viewIndex < 0 || viewIndex >= calculatedViewsData.calculated_views.length) {
-                 // Se inválido ou vazio, exibe apenas o cabeçalho básico "Descrição"
-                 const headerRow = thead.insertRow();
-                 const thDescricao = document.createElement('th'); // Agora a Descrição é a primeira TH
-                 thDescricao.textContent = 'Descrição';
-                 headerRow.appendChild(thDescricao);
-
-                 console.log("Dados de visão calculada não encontrados ou índice inválido. Exibindo tabela vazia.");
-                 return;
-             }
-
-             // Pega a visão calculada selecionada do array
-             const selectedView = calculatedViewsData.calculated_views[viewIndex];
-             console.log("Renderizando visão:", selectedView);
-
-             // Atualiza o subtítulo com o nome da visão
-             viewTitle.textContent = `${selectedView.plan_name} (DataSource: ${selectedView.data_source_name})`;
-
-             // Monta a ÚNICA linha de cabeçalho com os títulos das colunas
-             const headerRow = thead.insertRow();
-
-             // Cabeçalho para a coluna de Descrição (agora é a primeira coluna visível)
-             const thDescricao = document.createElement('th');
-             thDescricao.textContent = 'Descrição';
-             thDescricao.classList.add('indicador-col'); // Usa a classe para estilização e como marcador de cabeçalho de linha
-             headerRow.appendChild(thDescricao);
-
-
-             // Adiciona colunas de cabeçalho para cada período (com listeners de seleção de coluna)
-             selectedView.periodos.forEach((periodString, colIndex) => {
-                 const th = document.createElement('th');
-                 th.textContent = formatPeriodHeader(periodString);
-                 th.style.textAlign = 'center';
-                 th.classList.add('cabecalho-ano'); // Classe da V1 para estilo/marcação de seleção
-                 th.setAttribute('data-col', colIndex); // Marca com índice da coluna
-
-                 // Event listener para seleção de coluna (Ctrl/Cmd e Shift)
-                 th.addEventListener('click', function(e) {
-                     const clickedCol = parseInt(this.getAttribute('data-col'));
-                     const allPeriodHeaders = Array.from(thead.querySelectorAll('th[data-col]'));
-
-                     if (!e.ctrlKey && !e.shiftKey) {
-                         clearSelection();
-                         this.classList.add('cabecalho-selecionado');
-                         tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.add('cell-selecionada'));
-                     } else if (e.ctrlKey || e.metaKey) {
-                         this.classList.toggle('cabecalho-selecionado');
-                         tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.toggle('cell-selecionada'));
-                     } else if (e.shiftKey) {
-                         let lastSelectedCol = -1;
-                         // Encontra a última coluna de período selecionada explicitamente (não o cabeçalho de descrição)
-                         for (let i = 0; i < allPeriodHeaders.length; i++) {
-                             if (allPeriodHeaders[i].classList.contains('cabecalho-selecionado')) {
-                                 lastSelectedCol = parseInt(allPeriodHeaders[i].getAttribute('data-col'));
-                                 break;
-                             }
-                         }
-                         // Se nenhuma coluna de período estava selecionada, considera a primeira coluna de período como o ponto de partida
-                         if (lastSelectedCol === -1 && allPeriodHeaders.length > 0) {
-                             lastSelectedCol = parseInt(allPeriodHeaders[0].getAttribute('data-col'));
-                         } else if (lastSelectedCol === -1) { // Se não há colunas de período
-                             lastSelectedCol = clickedCol;
-                         }
-
-
-                         const startCol = Math.min(lastSelectedCol, clickedCol);
-                         const endCol = Math.max(lastSelectedCol, clickedCol);
-
-                         allPeriodHeaders.forEach(header => {
-                              const headerCol = parseInt(header.getAttribute('data-col'));
-                              if (headerCol >= startCol && headerCol <= endCol) {
-                                  header.classList.add('cabecalho-selecionado');
-                              } else {
-                                  header.classList.remove('cabecalho-selecionado');
-                              }
-                         });
-
-                         tbody.querySelectorAll('tr').forEach(row => {
-                             row.querySelectorAll('td.planilha-valor').forEach(cell => {
-                                 const cellCol = parseInt(cell.getAttribute('data-col'));
-                                 if (cellCol >= startCol && cellCol <= endCol) {
-                                     cell.classList.add('cell-selecionada');
-                                 } else {
-                                     cell.classList.remove('cell-selecionada');
-                                 }
-                             });
-                         });
-                     }
-                     e.stopPropagation();
-                 });
-
-                 headerRow.appendChild(th);
-             });
-
-
-             // Monta o corpo da tabela (linhas para cada conta)
-             selectedView.accounts.forEach((account, rowIndex) => {
-                 const dataRow = tbody.insertRow();
-
-                  // Adiciona classes de estilo à linha inteira com base no tipo da conta
-                 if (account.tipo === 'sintetica') dataRow.classList.add('conta-sintetica');
-                 else if (account.tipo === 'analitica') dataRow.classList.add('conta-analitica');
-                 else if (account.tipo === 'calculo') dataRow.classList.add('conta-calculo');
-
-
-                 // Célula para a Descrição (agora também o "cabeçalho de linha" para seleção)
-                 const descricaoCell = dataRow.insertCell();
-                 descricaoCell.textContent = account.descricao;
-                 descricaoCell.classList.add('account-descricao');
-                 // CORRIGIDO: Declarar nivel aqui antes de usar
-                 const nivel = typeof account.nivel === 'number' && !isNaN(account.nivel) ? account.nivel : 1;
-                 descricaoCell.classList.add(getIndentClass(nivel));
-                 
-                 descricaoCell.classList.add('indicador-col'); // Marca a célula de descrição como indicador de linha
-                 descricaoCell.setAttribute('data-row', rowIndex); // Marca com o índice da linha
-
-                 // Event listener para seleção de linha (Ctrl/Cmd e Shift) - AGORA NA CÉLULA DE DESCRIÇÃO
-                 descricaoCell.addEventListener('click', function(e) {
-                     const clickedRow = parseInt(this.getAttribute('data-row'));
-                     const allRowHeaders = Array.from(tbody.querySelectorAll('td.indicador-col')); // Todas as células de descrição/indicador
-
-                     if (!e.ctrlKey && !e.shiftKey) {
-                         clearSelection();
-                         this.classList.add('indicador-selecionado');
-                         dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
-                     } else if (e.ctrlKey || e.metaKey) {
-                         this.classList.toggle('indicador-selecionado');
-                         dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.toggle('cell-selecionada'));
-                     } else if (e.shiftKey) {
-                         let lastSelectedRow = -1;
-                         for (let i = 0; i < allRowHeaders.length; i++) {
-                             if (allRowHeaders[i].classList.contains('indicador-selecionado')) {
-                                 lastSelectedRow = parseInt(allRowHeaders[i].getAttribute('data-row'));
-                                 break;
-                             }
-                         }
-                         if (lastSelectedRow === -1 && allRowHeaders.length > 0) {
-                             lastSelectedRow = parseInt(allRowHeaders[0].getAttribute('data-row'));
-                         } else if (lastSelectedRow === -1) { // Se não há linhas de cabeçalho
-                             lastSelectedRow = clickedRow;
-                         }
-
-                         const startRow = Math.min(lastSelectedRow, clickedRow);
-                         const endRow = Math.max(lastSelectedRow, clickedRow);
-
-                         allRowHeaders.forEach(header => {
-                             const headerRow = parseInt(header.getAttribute('data-row'));
-                             if (headerRow >= startRow && headerRow <= endRow) {
-                                  header.classList.add('indicador-selecionado');
-                             } else {
-                                  header.classList.remove('indicador-selecionado');
-                             }
-                         });
-
-                         tbody.querySelectorAll('tr').forEach(row => {
-                             const rowIdx = parseInt(row.querySelector('td.indicador-col').getAttribute('data-row'));
-                             if (rowIdx >= startRow && rowIdx <= endRow) {
-                                 row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
-                             } else {
-                                 row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.remove('cell-selecionada'));
-                             }
-                         });
-                     }
-                     e.stopPropagation();
-                 });
-
-                 dataRow.appendChild(descricaoCell);
-
-
-                 // Adiciona células para os valores de cada período (com listeners de seleção de célula)
-                 selectedView.periodos.forEach((periodString, periodIndex) => {
-                     const valueCell = dataRow.insertCell();
-                     const value = account.valores[periodString];
-                     let formattedValue = formatCurrency(value);
-
-                     valueCell.textContent = formattedValue;
-                     valueCell.classList.add('value-cell');
-                     valueCell.classList.add('planilha-valor'); // Importante para seleção de área
-                     valueCell.setAttribute('data-row', rowIndex);
-                     valueCell.setAttribute('data-col', periodIndex); // ColIndex para a célula de valor
-
-
-                     // Event listeners para seleção de célula individual/faixa
-                     valueCell.addEventListener('mousedown', function(e) {
-                          isMouseDown = true;
-                          if (e.ctrlKey || e.metaKey) {
-                              this.classList.toggle('cell-selecionada');
-                              lastSelectedCell = this;
-                          } else if (e.shiftKey && lastSelectedCell) {
-                              selectCellsInRange(getCellPosition(lastSelectedCell), getCellPosition(this));
-                          } else {
-                              clearSelection();
-                              this.classList.add('cell-selecionada');
-                              lastSelectedCell = this;
-                          }
-                          startCell = this;
-                          e.preventDefault();
-                          e.stopPropagation(); // Impede que o clique se propague e acione listeners de linha/coluna
-                      });
-
-                      valueCell.addEventListener('mouseover', function(e) {
-                          if (isMouseDown && startCell) {
-                              selectCellsInRange(getCellPosition(startCell), getCellPosition(this));
-                          }
-                      });
-
-                      valueCell.addEventListener('mouseup', function() {
-                          isMouseDown = false;
-                          startCell = null;
-                      });
-
-
-                     dataRow.appendChild(valueCell);
-                 });
-
-                 tbody.appendChild(dataRow);
-             });
-
-             // Adiciona um listener global para limpar a seleção ao clicar fora da tabela
-              document.addEventListener('mousedown', function(e) {
-                  if (!tabela.contains(e.target) && !viewSelect.contains(e.target)) {
-                      clearSelection();
-                  }
-              });
-              document.addEventListener('mouseup', () => {
-                  isMouseDown = false;
-                  startCell = null;
-              });
-         }
-
-
-         // --- Inicialização ---
-
-         // Popular o dropdown de seleção de visão
-         if (calculatedViewsData && calculatedViewsData.calculated_views && calculatedViewsData.calculated_views.length > 0) {
-             const defaultOption = document.createElement('option');
-             defaultOption.value = "";
-             defaultOption.textContent = "-- Selecione --";
-             viewSelect.appendChild(defaultOption);
-
-             calculatedViewsData.calculated_views.forEach((view, index) => {
-                 const option = document.createElement('option');
-                 option.value = index;
-                 option.textContent = `${view.plan_name} (com ${view.data_source_name})`;
-                 viewSelect.appendChild(option);
-             });
-         } else {
-              const option = document.createElement('option');
-              option.value = "";
-              option.textContent = "Nenhuma visão calculada encontrada.";
-              viewSelect.appendChild(option);
-              viewSelect.disabled = true;
-              console.log("Nenhuma visão calculada encontrada no JSON.");
-         }
-
-         // Adiciona listener para o evento de mudança no dropdown
-         viewSelect.addEventListener('change', (event) => {
-             const selectedValue = event.target.value;
-             if (selectedValue !== "") {
-                 renderTable(parseInt(selectedValue));
-             } else {
-                  renderTable("");
-             }
-         });
-
-         // Inicialização: Renderiza a tabela vazia com os títulos iniciais
-          renderTable("");
-
-          // Adiciona listener global para desabilitar a seleção de texto do navegador
-          document.addEventListener('selectstart', function(e){ e.preventDefault(); });
-
-
-    </script>
-</body>
-</html>
+  
+          // Obtém referências para os elementos HTML
+          const viewSelect = document.getElementById('view-select');
+          const viewTitle = document.getElementById('view-title');
+          const tabela = document.getElementById('tabela');
+          const thead = tabela.querySelector('thead');
+          const tbody = tabela.querySelector('tbody');
+  
+          // --- Variáveis de estado para seleção ---
+          let lastSelectedCell = null;
+          let isMouseDown = false;
+          let startCell = null;
+  
+          // --- Funções de Formatação e Utilitários ---
+          function formatCurrency(value) {
+               if (typeof value !== 'number' || isNaN(value) || value === null) {
+                   return '-';
+               }
+               try {
+                    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+               } catch (e) {
+                    console.error("Erro formatando moeda:", value, e);
+                    return String(value);
+               }
+           }
+  
+           function formatPeriodHeader(periodString) {
+                try {
+                    const date = new Date(periodString);
+                    if (!isNaN(date)) {
+                        return date.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
+                    }
+                } catch (e) {
+                    console.warn(`Não foi possível formatar o período '${periodString}' como data. Usando string original.`);
+                }
+                return String(periodString).trim();
+           }
+  
+           function getIndentClass(level) {
+                if (typeof level !== 'number' || isNaN(level) || level < 1) return 'indent-level-0';
+                return `indent-level-${Math.max(0, level - 1)}`;
+           }
+  
+          // --- Funções de Interação da Tabela ---
+  
+           function getCellPosition(cell) {
+               return {
+                   row: parseInt(cell.getAttribute('data-row')),
+                   col: parseInt(cell.getAttribute('data-col'))
+               };
+           }
+  
+           function selectCellsInRange(start, end) {
+               const allCells = tabela.querySelectorAll('.planilha-valor');
+               allCells.forEach(cell => {
+                   const { row, col } = getCellPosition(cell);
+                   const inRowRange = row >= Math.min(start.row, end.row) && row <= Math.max(start.row, end.row);
+                   const inColRange = col >= Math.min(start.col, end.col) && col <= Math.max(start.col, end.col);
+                   cell.classList.toggle('cell-selecionada', inRowRange && inColRange);
+               });
+           }
+  
+           function clearSelection() {
+               tabela.querySelectorAll('.cell-selecionada').forEach(cell => cell.classList.remove('cell-selecionada'));
+               thead.querySelectorAll('.cabecalho-selecionado').forEach(th => th.classList.remove('cabecalho-selecionado'));
+               tbody.querySelectorAll('.indicador-selecionado').forEach(td => td.classList.remove('indicador-selecionado'));
+           }
+  
+  
+          // --- Função Principal para Renderizar a Tabela ---
+  
+          function renderTable(viewIndex) {
+               // Limpa cabeçalho e corpo atuais da tabela
+               thead.innerHTML = '';
+               tbody.innerHTML = '';
+               viewTitle.textContent = 'Selecione uma Visão para Visualizar...';
+  
+               // Verifica se o índice da visão é válido
+               if (viewIndex === "" || !calculatedViewsData || !calculatedViewsData.calculated_views || viewIndex < 0 || viewIndex >= calculatedViewsData.calculated_views.length) {
+                   // Se inválido ou vazio, exibe apenas o cabeçalho básico "Descrição"
+                   const headerRow = thead.insertRow();
+                   const thDescricao = document.createElement('th'); // Agora a Descrição é a primeira TH
+                   thDescricao.textContent = 'Descrição';
+                   headerRow.appendChild(thDescricao);
+  
+                   console.log("Dados de visão calculada não encontrados ou índice inválido. Exibindo tabela vazia.");
+                   return;
+               }
+  
+               // Pega a visão calculada selecionada do array
+               const selectedView = calculatedViewsData.calculated_views[viewIndex];
+               console.log("Renderizando visão:", selectedView);
+  
+               // REMOVIDO: Cálculo do nível máximo para a visão atual
+               // let max_nivel = 0;
+               // if (selectedView.accounts && selectedView.accounts.length > 0) {
+               //     max_nivel = Math.max(...selectedView.accounts.map(acc => acc.nivel || 1));
+               // }
+               // console.log("Nível máximo para a visão atual:", max_nivel);
+  
+               // Atualiza o subtítulo com o nome da visão
+               viewTitle.textContent = `${selectedView.plan_name} (DataSource: ${selectedView.data_source_name})`;
+  
+               // Monta a ÚNICA linha de cabeçalho com os títulos das colunas
+               const headerRow = thead.insertRow();
+  
+               // Cabeçalho para a coluna de Descrição (agora é a primeira coluna visível)
+               const thDescricao = document.createElement('th');
+               thDescricao.textContent = 'Descrição';
+               thDescricao.classList.add('indicador-col'); // Usa a classe para estilização e como marcador de cabeçalho de linha
+               headerRow.appendChild(thDescricao);
+  
+  
+               // Adiciona colunas de cabeçalho para cada período (com listeners de seleção de coluna)
+               selectedView.periodos.forEach((periodString, colIndex) => {
+                   const th = document.createElement('th');
+                   th.textContent = formatPeriodHeader(periodString);
+                   th.style.textAlign = 'center';
+                   th.classList.add('cabecalho-ano'); // Classe da V1 para estilo/marcação de seleção
+                   th.setAttribute('data-col', colIndex); // Marca com índice da coluna
+  
+                   // Event listener para seleção de coluna (Ctrl/Cmd e Shift)
+                   th.addEventListener('click', function(e) {
+                       const clickedCol = parseInt(this.getAttribute('data-col'));
+                       const allPeriodHeaders = Array.from(thead.querySelectorAll('th[data-col]'));
+  
+                       if (!e.ctrlKey && !e.shiftKey) {
+                           clearSelection();
+                           this.classList.add('cabecalho-selecionado');
+                           tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.add('cell-selecionada'));
+                       } else if (e.ctrlKey || e.metaKey) {
+                           this.classList.toggle('cabecalho-selecionado');
+                           tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.toggle('cell-selecionada'));
+                       } else if (e.shiftKey) {
+                           let lastSelectedCol = -1;
+                           // Encontra a última coluna de período selecionada explicitamente (não o cabeçalho de descrição)
+                           for (let i = 0; i < allPeriodHeaders.length; i++) {
+                               if (allPeriodHeaders[i].classList.contains('cabecalho-selecionado')) {
+                                   lastSelectedCol = parseInt(allPeriodHeaders[i].getAttribute('data-col'));
+                                   break;
+                               }
+                           }
+                           // Se nenhuma coluna de período estava selecionada, considera a primeira coluna de período como o ponto de partida
+                           if (lastSelectedCol === -1 && allPeriodHeaders.length > 0) {
+                               lastSelectedCol = parseInt(allPeriodHeaders[0].getAttribute('data-col'));
+                           } else if (lastSelectedCol === -1) { // Se não há colunas de período
+                               lastSelectedCol = clickedCol;
+                           }
+  
+                           const startCol = Math.min(lastSelectedCol, clickedCol);
+                           const endCol = Math.max(lastSelectedCol, clickedCol);
+  
+                           allPeriodHeaders.forEach(header => {
+                                const headerCol = parseInt(header.getAttribute('data-col'));
+                                if (headerCol >= startCol && headerCol <= endCol) {
+                                    header.classList.add('cabecalho-selecionado');
+                                } else {
+                                    header.classList.remove('cabecalho-selecionado');
+                                }
+                           });
+  
+                           tbody.querySelectorAll('tr').forEach(row => {
+                               row.querySelectorAll('td.planilha-valor').forEach(cell => {
+                                   const cellCol = parseInt(cell.getAttribute('data-col'));
+                                   if (cellCol >= startCol && cellCol <= endCol) {
+                                       cell.classList.add('cell-selecionada');
+                                   } else {
+                                       cell.classList.remove('cell-selecionada');
+                                   }
+                               });
+                           });
+                       }
+                       e.stopPropagation();
+                   });
+  
+                   headerRow.appendChild(th);
+               });
+  
+  
+               // Monta o corpo da tabela (linhas para cada conta)
+               selectedView.accounts.forEach((account, rowIndex) => {
+                   const dataRow = tbody.insertRow();
+  
+                    // Adiciona classes de estilo à linha inteira com base no tipo da conta
+                   if (account.tipo === 'sintetica') {
+                       dataRow.classList.add('conta-sintetica');
+                   } else if (account.tipo === 'analitica') {
+                       dataRow.classList.add('conta-analitica');
+                   } else if (typeof account.tipo === 'string' && account.tipo.substring(0, 7) === 'calculo') {
+                       dataRow.classList.add('conta-calculo');
+                   }
+  
+                   // REMOVIDO: Adiciona a classe 'last-level-row' se a conta estiver no nível mais profundo
+                   // if (account.nivel === max_nivel) {
+                   //     dataRow.classList.add('last-level-row');
+                   // }
+  
+                   // Célula para a Descrição (agora também o "cabeçalho de linha" para seleção)
+                   const descricaoCell = dataRow.insertCell();
+                   descricaoCell.textContent = account.descricao;
+                   descricaoCell.classList.add('account-descricao');
+                   // CORRIGIDO: Declarar nivel aqui antes de usar
+                   const nivel = typeof account.nivel === 'number' && !isNaN(account.nivel) ? account.nivel : 1;
+                   descricaoCell.classList.add(getIndentClass(nivel));
+                   
+                   descricaoCell.classList.add('indicador-col'); // Marca a célula de descrição como indicador de linha
+                   descricaoCell.setAttribute('data-row', rowIndex); // Marca com o índice da linha
+  
+                   // Event listener para seleção de linha (Ctrl/Cmd e Shift) - AGORA NA CÉLULA DE DESCRIÇÃO
+                   descricaoCell.addEventListener('click', function(e) {
+                       const clickedRow = parseInt(this.getAttribute('data-row'));
+                       const allRowHeaders = Array.from(tbody.querySelectorAll('td.indicador-col')); // Todas as células de descrição/indicador
+  
+                       if (!e.ctrlKey && !e.shiftKey) {
+                           clearSelection();
+                           this.classList.add('indicador-selecionado');
+                           dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
+                       } else if (e.ctrlKey || e.metaKey) {
+                           this.classList.toggle('indicador-selecionado');
+                           dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.toggle('cell-selecionada'));
+                       } else if (e.shiftKey) {
+                           let lastSelectedRow = -1;
+                           for (let i = 0; i < allRowHeaders.length; i++) {
+                               if (allRowHeaders[i].classList.contains('indicador-selecionado')) {
+                                   lastSelectedRow = parseInt(allRowHeaders[i].getAttribute('data-row'));
+                                   break;
+                               }
+                           }
+                           if (lastSelectedRow === -1 && allRowHeaders.length > 0) {
+                               lastSelectedRow = parseInt(allRowHeaders[0].getAttribute('data-row'));
+                           } else if (lastSelectedRow === -1) { // Se não há linhas de cabeçalho
+                               lastSelectedRow = clickedRow;
+                           }
+  
+                           const startRow = Math.min(lastSelectedRow, clickedRow);
+                           const endRow = Math.max(lastSelectedRow, clickedRow);
+  
+                           allRowHeaders.forEach(header => {
+                               const headerRow = parseInt(header.getAttribute('data-row'));
+                               if (headerRow >= startRow && headerRow <= endRow) {
+                                    header.classList.add('indicador-selecionado');
+                               } else {
+                                    header.classList.remove('indicador-selecionado');
+                               }
+                           });
+  
+                           tbody.querySelectorAll('tr').forEach(row => {
+                               const rowIdx = parseInt(row.querySelector('td.indicador-col').getAttribute('data-row'));
+                               if (rowIdx >= startRow && rowIdx <= endRow) {
+                                   row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
+                               } else {
+                                   row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.remove('cell-selecionada'));
+                               }
+                           });
+                       }
+                       e.stopPropagation();
+                   });
+  
+                   dataRow.appendChild(descricaoCell);
+  
+  
+                   // Adiciona células para os valores de cada período (com listeners de seleção de célula)
+                   selectedView.periodos.forEach((periodString, periodIndex) => {
+                       const valueCell = dataRow.insertCell();
+                       const value = account.valores[periodString];
+                       let formattedValue = formatCurrency(value);
+  
+                       valueCell.textContent = formattedValue;
+                       valueCell.classList.add('value-cell');
+                       valueCell.classList.add('planilha-valor'); // Importante para seleção de área
+                       valueCell.setAttribute('data-row', rowIndex);
+                       valueCell.setAttribute('data-col', periodIndex); // ColIndex para a célula de valor
+  
+  
+                       // Event listeners para seleção de célula individual/faixa
+                       valueCell.addEventListener('mousedown', function(e) {
+                            isMouseDown = true;
+                            if (e.ctrlKey || e.metaKey) {
+                                this.classList.toggle('cell-selecionada');
+                                lastSelectedCell = this;
+                            } else if (e.shiftKey && lastSelectedCell) {
+                                selectCellsInRange(getCellPosition(lastSelectedCell), getCellPosition(this));
+                            } else {
+                                clearSelection();
+                                this.classList.add('cell-selecionada');
+                                lastSelectedCell = this;
+                            }
+                            startCell = this;
+                            e.preventDefault();
+                            e.stopPropagation(); // Impede que o clique se propague e acione listeners de linha/coluna
+                        });
+  
+                        valueCell.addEventListener('mouseover', function(e) {
+                            if (isMouseDown && startCell) {
+                                selectCellsInRange(getCellPosition(startCell), getCellPosition(this));
+                            }
+                        });
+  
+                        valueCell.addEventListener('mouseup', function() {
+                            isMouseDown = false;
+                            startCell = null;
+                        });
+  
+  
+                       dataRow.appendChild(valueCell);
+                   });
+  
+                   tbody.appendChild(dataRow);
+               });
+  
+               // Adiciona um listener global para limpar a seleção ao clicar fora da tabela
+                document.addEventListener('mousedown', function(e) {
+                    if (!tabela.contains(e.target) && !viewSelect.contains(e.target)) {
+                        clearSelection();
+                    }
+                });
+                document.addEventListener('mouseup', () => {
+                    isMouseDown = false;
+                    startCell = null;
+                });
+           }
+  
+          // --- Inicialização ---
+  
+           // Popular o dropdown de seleção de visão
+           if (calculatedViewsData && calculatedViewsData.calculated_views && calculatedViewsData.calculated_views.length > 0) {
+               const defaultOption = document.createElement('option');
+               defaultOption.value = "";
+               defaultOption.textContent = "-- Selecione --";
+               viewSelect.appendChild(defaultOption);
+  
+               calculatedViewsData.calculated_views.forEach((view, index) => {
+                   const option = document.createElement('option');
+                   option.value = index;
+                   option.textContent = `${view.plan_name} (com ${view.data_source_name})`;
+                   viewSelect.appendChild(option);
+               });
+           } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "Nenhuma visão calculada encontrada.";
+                viewSelect.appendChild(option);
+                viewSelect.disabled = true;
+                console.log("Nenhuma visão calculada encontrada no JSON.");
+           }
+  
+           // Adiciona listener para o evento de mudança no dropdown
+           viewSelect.addEventListener('change', (event) => {
+               const selectedValue = event.target.value;
+               if (selectedValue !== "") {
+                   renderTable(parseInt(selectedValue));
+               } else {
+                    renderTable("");
+               }
+           });
+  
+           // Inicialização: Renderiza a tabela vazia com os títulos iniciais
+            renderTable("");
+  
+            // Adiciona listener global para desabilitar a seleção de texto do navegador
+            document.addEventListener('selectstart', function(e){ e.preventDefault(); });
+  
+  
+      </script>
+  </body>
+  </html>
