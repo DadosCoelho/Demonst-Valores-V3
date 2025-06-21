@@ -1,199 +1,241 @@
 <!DOCTYPE html>
-  <html lang="pt-br">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Visão Financeira Calculada</title>
-      <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4598/4598376.png">
-      <script src="https://cdn.tailwindcss.com"></script>
-      <style>
-          /* Estilos copiados da V1 e V3 */
-          body {
-               font-family: sans-serif;
-               line-height: 1.6;
-               margin: 0;
-               padding: 20px;
-               background-color: #f7f7f7;
-               color: #333;
-           }
-           .container {
-               max-width: 1200px;
-               margin: 0 auto;
-               padding: 0 15px;
-           }
-  
-          /* Estilos de célula e linha */
-          .cell-box {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-          }
-          /* Classes para seleção - REATIVADAS */
-          .cell-selecionada {
-              background-color: #fff9aa !important; /* Fundo amarelo claro */
-          }
-          .cabecalho-selecionado, .indicador-selecionado {
-              background: #60a5fa !important; /* Fundo azul claro */
-              color: #fff;
-          }
-  
-          .header-box {
-              text-align: center;
-          }
-          /* A classe indicador-col agora se aplica à coluna Descrição na tbody */
-          .indicador-col {
-              background-color: #F9FAFB; /* Fundo cinza claro */
-              width: 300px; /* Largura da coluna de descrição */
-          }
-          .grande {
-              font-size: 1rem;
-          }
-          .linha-azul { /* Estilo de linha da V1 (pode ser usado opcionalmente) */
-              background-color: #DBEAFE;
-          }
-          .linha-azul-escuro { /* Estilo de linha da V1 (pode ser opcionalmente) */
-              background-color: #93C5FD;
-          }
-  
-          /* Estilos da tabela */
-           table {
-               border-collapse: collapse;
-               width: 100%;
-               margin-top: 20px;
-               background-color: #fff;
-               border-radius: 8px;
-               overflow: hidden;
-               box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-           }
-           th, td {
-               border: 1px solid #ddd;
-               padding: 10px 8px;
-               text-align: left;
-           }
-           /* Estilo para o cabeçalho da tabela (thead) */
-           thead tr {
-               background-color: #60a5fa; /* Azul da V1 para o cabeçalho */
-               color: white;
-           }
-           th {
-               font-weight: bold;
-               text-transform: uppercase;
-               position: sticky;
-               top: 0;
-               z-index: 1;
-               background-color: #60a5fa; /* Garante que o fundo do cabeçalho seja azul mesmo com sticky */
-               color: white;
-           }
-           /* Estilo específico para os títulos das colunas fixas no thead */
-           /* A coluna "Descrição" agora é a primeira TH */
-           thead th:first-child {
-               background-color: #e0e0e0; /* Cinza da V3 para cabeçalho secundário */
-               color: #333; /* Cor de texto da V3 */
-           }
-  
-  
-           /* A coluna de código foi removida. Ajustei o CSS para a descrição ser a primeira */
-           td.account-descricao { /* Coluna Descrição na tbody */
-               /* REMOVIDO: font-weight: bold; daqui. Agora, o negrito é controlado pelas classes de linha (.conta-sintetica, .conta-calculo) */
-               white-space: nowrap;
-               /* Indentação será aplicada via classes CSS */
-           }
-  
-           /* Classes de indentação */
-           .indent-level-0 { padding-left: 10px; }
-           .indent-level-1 { padding-left: 25px; }
-           .indent-level-2 { padding-left: 40px; }
-           .indent-level-3 { padding-left: 55px; }
-           .indent-level-4 { padding-left: 70px; }
-           .indent-level-5 { padding-left: 85px; }
-  
-           /* Estilos para linhas de contas por tipo (V3) */
-            .conta-sintetica td {
-                font-weight: bold; /* Sintéticas permanecem em negrito */
-            }
-             .conta-analitica {
-                 /* As contas analíticas não terão negrito, pois a regra geral de td.account-descricao foi removida */
-             }
-            .conta-calculo td {
-                font-weight: bold; /* Contas de cálculo (nível 1) em negrito */
-                font-style: italic;
-                border-top: 1px solid #93C5FD; /* Linha acima de contas de cálculo */
-            }
-            /* REMOVIDO: Estilo para contas de último nível (as que não devem ser negrito) */
-            /* .last-level-row td {
-                font-weight: normal !important;
-            } */
-  
-          /* Estilos para células de valor (V3) */
-           .value-cell { /* Células de dados na tbody */
-               text-align: right;
-               white-space: nowrap;
-               font-family: monospace;
-           }
-           .negative-value {
-               color: #d32f2f;
-           }
-  
-           /* Estilo para o seletor de visão (V3) */
-           .view-selector {
-               margin-bottom: 20px;
-               background-color: #fff;
-               padding: 15px;
-               border-radius: 8px;
-               box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-           }
-           .view-selector label {
-               font-weight: bold;
-               margin-right: 10px;
-           }
-           .view-selector select {
-               padding: 8px;
-               border: 1px solid #ccc;
-               border-radius: 4px;
-               font-size: 1rem;
-           }
-  
-           /* Remover estilos de dropdown customizado da V1 que não serão usados */
-           .dropdown-multi { display: none; }
-  
-           /* Container para scrolagem horizontal da tabela (V3) */
-           .table-container {
-               overflow-x: auto;
-               margin-top: 20px;
-           }
-  
-      </style>
-  </head>
-  <body class="bg-gray-100 text-gray-800">
-      <div class="container mx-auto px-4 py-8">
-           <!-- Título principal fora da tabela -->
-           <h1 class="text-2xl font-bold mb-4">Demonstração Financeira Calculada</h1>
-  
-           <!-- Subtítulo para a visão selecionada -->
-           <h2 id="view-title" class="text-xl font-semibold mb-6">Selecione uma Visão para Visualizar...</h2>
-  
-          <div class="flex items-center mb-6 view-selector">
-              <label for="view-select">Selecionar Visão:</label>
-              <select id="view-select"></select>
-          </div>
-  
-           <div class="table-container">
-              <table id="tabela" class="min-w-full bg-white rounded-xl shadow-md border">
-                  <thead>
-                       <!-- A linha de cabeçalho será adicionada pelo JS -->
-                      <tr></tr>
-                  </thead>
-                  <tbody>
-                      <!-- As linhas de dados serão preenchidas via JS -->
-                  </tbody>
-              </table>
-          </div>
-  
-      </div>
-  
-      <script>
-          // Variável que será substituída pelo script Python processar_dados.py
-          const calculatedViewsData = {
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visão Financeira Calculada</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4598/4598376.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos copiados da V1 e V3 e ajustados */
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Estilos de célula e linha */
+        .cell-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* Classes para seleção */
+        .cell-selecionada {
+            background-color: #fff9aa !important; /* Fundo amarelo claro */
+        }
+        .cabecalho-selecionado, .indicador-selecionado {
+            background: #60a5fa !important; /* Fundo azul claro */
+            color: #fff;
+        }
+
+        .header-box {
+            text-align: center;
+        }
+        /* A classe indicador-col agora se aplica à coluna Descrição na tbody */
+        .indicador-col {
+            background-color: #F9FAFB; /* Fundo cinza claro */
+            width: 330px; /* Largura da coluna de descrição */
+        }
+        .grande {
+            font-size: 1rem;
+        }
+        .linha-azul { /* Estilo de linha da V1 (pode ser usado opcionalmente) */
+            background-color: #DBEAFE;
+        }
+        .linha-azul-escuro { /* Estilo de linha da V1 (pode ser opcionalmente) */
+            background-color: #93C5FD;
+        }
+
+        /* Estilos da tabela */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            /* REMOVIDO: overflow: hidden; - para que sticky funcione */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 8px;
+            text-align: left;
+        }
+        /* Estilo para o cabeçalho da tabela (thead) */
+        thead tr {
+            background-color: #60a5fa; /* Azul da V1 para o cabeçalho */
+            color: white;
+        }
+        th {
+            font-weight: bold;
+            text-transform: uppercase;
+            position: sticky; /* Torna os cabeçalhos fixos ao rolar verticalmente */
+            top: 0;
+            z-index: 1; /* Garante que os cabeçalhos fiquem acima do conteúdo */
+            background-color: #e0e0e0; /* Garante que o fundo do cabeçalho seja azul mesmo com sticky */
+            color: #333;
+        }
+        /* ESTILO NOVO/MODIFICADO: Coluna 'Descrição' no Cabeçalho */
+        thead th:first-child {
+            background-color: #e0e0e0; /* Cinza da V3 para cabeçalho secundário */
+            color: #333; /* Cor de texto da V3 */
+            position: sticky; /* Torna a primeira coluna fixa ao rolar horizontalmente */
+            left: 0;
+            z-index: 2; /* Z-index mais alto para ficar acima de outros cabeçalhos sticky */
+        }
+
+        /* ESTILO NOVO: Largura mínima e não quebrar linha para os cabeçalhos de período (todas as THs exceto a primeira) */
+        thead th:not(:first-child) { 
+            min-width: 100px; /* Valor mínimo para garantir que o texto não quebre, ajuste conforme necessário */
+            white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+        }
+
+
+        /* ESTILO MODIFICADO: Coluna 'Descrição' no Corpo da Tabela */
+        td.account-descricao { /* Coluna Descrição na tbody */
+            position: sticky; /* Torna a célula da descrição fixa ao rolar horizontalmente */
+            left: 0;
+            z-index: 1; /* Garante que ela fique acima das células de dados que rolam */
+            background-color: #F9FAFB; /* Fundo para evitar 'ghosting' ao rolar */
+            /* REMOVIDO: white-space: nowrap; - agora no span interno */
+            /* Indentação será aplicada via classes CSS */
+            display: flex; /* Permite que o ícone de toggle e o texto fiquem na mesma linha */
+            align-items: center; /* Alinha verticalmente ícone e texto */
+        }
+        
+        /* NOVO ESTILO: Para o span que contém o texto da descrição (ajuste para reticências) */
+        td.account-descricao > span:last-child { 
+            margin-left: 5px;
+            white-space: nowrap; /* Impede a quebra de linha */
+            overflow: hidden;     /* Oculta o conteúdo que excede o limite */
+            text-overflow: ellipsis; /* Adiciona "..." se o texto for truncado */
+            flex-grow: 1; /* Permite que o span cresça para preencher o espaço disponível */
+            flex-shrink: 1; /* Permite que o span encolha se necessário */
+            min-width: 0; /* Permite que o flex item encolha abaixo do seu tamanho de conteúdo, essencial com overflow: hidden */
+        }
+
+        /* Classes de indentação */
+        .indent-level-0 { padding-left: 10px; }
+        .indent-level-1 { padding-left: 25px; }
+        .indent-level-2 { padding-left: 40px; }
+        .indent-level-3 { padding-left: 55px; }
+        .indent-level-4 { padding-left: 70px; }
+        .indent-level-5 { padding-left: 85px; }
+
+        /* Estilos para linhas de contas por tipo (V3) */
+        .conta-sintetica td {
+            font-weight: bold; /* Sintéticas permanecem em negrito */
+        }
+        .conta-analitica {
+            /* As contas analíticas não terão negrito, pois a regra geral de td.account-descricao foi removida */
+        }
+        .conta-calculo td {
+            font-weight: bold; /* Contas de cálculo (nível 1) em negrito */
+            font-style: italic;
+            border-top: 1px solid #93C5FD; /* Linha acima de contas de cálculo */
+        }
+
+        /* Estilos para células de valor (V3) */
+        .value-cell { /* Células de dados na tbody */
+            text-align: right;
+            white-space: nowrap;
+            font-family: monospace;
+        }
+        .negative-value {
+            color: #d32f2f;
+        }
+
+        /* Estilo para o seletor de visão (V3) */
+        .view-selector {
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .view-selector label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .view-selector select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Container para scrolagem horizontal da tabela (V3) */
+        .table-container {
+            overflow-x: auto; /* Permite rolagem horizontal */
+            margin-top: 20px;
+        }
+
+        /* --- NOVOS ESTILOS PARA EXPANDIR/COLAPSAR --- */
+        .toggle-arrow {
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.1s ease-in-out;
+            font-size: 0.8em; /* Levemente menor para não destoar */
+            vertical-align: middle; /* Alinha com o texto */
+            user-select: none; /* Impede a seleção do texto da seta */
+            width: 1em; /* Garante que o ícone tenha um tamanho clicável consistente */
+            text-align: center;
+        }
+        /* Rotaciona a seta para a direita quando a linha está colapsada (indicando "expandir") */
+        .collapsible-row.collapsed > td .toggle-arrow {
+            transform: rotate(-90deg);
+        }
+        /* Seta para baixo quando a linha está expandida (estado padrão, quando .collapsed não está presente) */
+        .collapsible-row:not(.collapsed) > td .toggle-arrow { 
+            transform: rotate(0deg);
+        }
+        /* Oculta as linhas que devem estar escondidas por colapso */
+        .hidden-by-collapse {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Título principal fora da tabela -->
+        <h1 class="text-2xl font-bold mb-4">Demonstração Financeira Calculada</h1>
+
+        <!-- Subtítulo para a visão selecionada -->
+        <h2 id="view-title" class="text-xl font-semibold mb-6">Selecione uma Visão para Visualizar...</h2>
+
+        <div class="flex items-center mb-6 view-selector">
+            <label for="view-select">Selecionar Visão:</label>
+            <select id="view-select"></select>
+        </div>
+
+        <div class="table-container">
+            <table id="tabela" class="min-w-full bg-white rounded-xl shadow-md border">
+                <thead>
+                    <!-- A linha de cabeçalho será adicionada pelo JS -->
+                    <tr></tr>
+                </thead>
+                <tbody>
+                    <!-- As linhas de dados serão preenchidas via JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // Variável que será substituída pelo script Python processar_dados.py
+        // Por padrão, deixamos ela com uma estrutura vazia para que o arquivo HTML seja um template.
+        // O script Python injetará os dados reais aqui, substituindo este conteúdo.
+        const calculatedViewsData = {
     "calculated_views": [
         {
             "plan_name": "SERVISE",
@@ -2563,372 +2605,490 @@
             ]
         }
     ],
-    "timestamp_utc": "2025-06-21T17:38:07.879568Z",
-    "timestamp_local": "2025-06-21T14:38:07.879568-03:00"
+    "timestamp_utc": "2025-06-21T21:49:21.041587Z",
+    "timestamp_local": "2025-06-21T18:49:21.041587-03:00"
 };
-  
-          // Obtém referências para os elementos HTML
-          const viewSelect = document.getElementById('view-select');
-          const viewTitle = document.getElementById('view-title');
-          const tabela = document.getElementById('tabela');
-          const thead = tabela.querySelector('thead');
-          const tbody = tabela.querySelector('tbody');
-  
-          // --- Variáveis de estado para seleção ---
-          let lastSelectedCell = null;
-          let isMouseDown = false;
-          let startCell = null;
-  
-          // --- Funções de Formatação e Utilitários ---
-          function formatCurrency(value) {
-               if (typeof value !== 'number' || isNaN(value) || value === null) {
-                   return '-';
-               }
-               try {
-                    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-               } catch (e) {
-                    console.error("Erro formatando moeda:", value, e);
-                    return String(value);
-               }
-           }
-  
-           function formatPeriodHeader(periodString) {
-                try {
-                    const date = new Date(periodString);
-                    if (!isNaN(date)) {
-                        return date.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
-                    }
-                } catch (e) {
-                    console.warn(`Não foi possível formatar o período '${periodString}' como data. Usando string original.`);
+        
+        // Obtém referências para os elementos HTML
+        const viewSelect = document.getElementById('view-select');
+        const viewTitle = document.getElementById('view-title');
+        const tabela = document.getElementById('tabela');
+        const thead = tabela.querySelector('thead');
+        const tbody = tabela.querySelector('tbody');
+
+        // --- Variáveis de estado para seleção ---
+        let lastSelectedCell = null;
+        let isMouseDown = false;
+        let startCell = null;
+
+        // --- Funções de Formatação e Utilitários ---
+        function formatCurrency(value) {
+            if (typeof value !== 'number' || isNaN(value) || value === null) {
+                return '-';
+            }
+            try {
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } catch (e) {
+                console.error("Erro formatando moeda:", value, e);
+                return String(value);
+            }
+        }
+
+        function formatPeriodHeader(periodString) {
+            try {
+                const date = new Date(periodString);
+                // Verifica se é uma data válida e não é uma data muito antiga (para evitar "Invalid Date")
+                if (!isNaN(date) && date.getFullYear() > 1900) {
+                    return date.toLocaleString('pt-BR', { month: 'short', year: 'numeric' }).replace('.', '');
                 }
-                return String(periodString).trim();
-           }
-  
-           function getIndentClass(level) {
-                if (typeof level !== 'number' || isNaN(level) || level < 1) return 'indent-level-0';
-                return `indent-level-${Math.max(0, level - 1)}`;
-           }
-  
-          // --- Funções de Interação da Tabela ---
-  
-           function getCellPosition(cell) {
-               return {
-                   row: parseInt(cell.getAttribute('data-row')),
-                   col: parseInt(cell.getAttribute('data-col'))
-               };
-           }
-  
-           function selectCellsInRange(start, end) {
-               const allCells = tabela.querySelectorAll('.planilha-valor');
-               allCells.forEach(cell => {
-                   const { row, col } = getCellPosition(cell);
-                   const inRowRange = row >= Math.min(start.row, end.row) && row <= Math.max(start.row, end.row);
-                   const inColRange = col >= Math.min(start.col, end.col) && col <= Math.max(start.col, end.col);
-                   cell.classList.toggle('cell-selecionada', inRowRange && inColRange);
-               });
-           }
-  
-           function clearSelection() {
-               tabela.querySelectorAll('.cell-selecionada').forEach(cell => cell.classList.remove('cell-selecionada'));
-               thead.querySelectorAll('.cabecalho-selecionado').forEach(th => th.classList.remove('cabecalho-selecionado'));
-               tbody.querySelectorAll('.indicador-selecionado').forEach(td => td.classList.remove('indicador-selecionado'));
-           }
-  
-  
-          // --- Função Principal para Renderizar a Tabela ---
-  
-          function renderTable(viewIndex) {
-               // Limpa cabeçalho e corpo atuais da tabela
-               thead.innerHTML = '';
-               tbody.innerHTML = '';
-               viewTitle.textContent = 'Selecione uma Visão para Visualizar...';
-  
-               // Verifica se o índice da visão é válido
-               if (viewIndex === "" || !calculatedViewsData || !calculatedViewsData.calculated_views || viewIndex < 0 || viewIndex >= calculatedViewsData.calculated_views.length) {
-                   // Se inválido ou vazio, exibe apenas o cabeçalho básico "Descrição"
-                   const headerRow = thead.insertRow();
-                   const thDescricao = document.createElement('th'); // Agora a Descrição é a primeira TH
-                   thDescricao.textContent = 'Descrição';
-                   headerRow.appendChild(thDescricao);
-  
-                   console.log("Dados de visão calculada não encontrados ou índice inválido. Exibindo tabela vazia.");
-                   return;
-               }
-  
-               // Pega a visão calculada selecionada do array
-               const selectedView = calculatedViewsData.calculated_views[viewIndex];
-               console.log("Renderizando visão:", selectedView);
-  
-               // REMOVIDO: Cálculo do nível máximo para a visão atual
-               // let max_nivel = 0;
-               // if (selectedView.accounts && selectedView.accounts.length > 0) {
-               //     max_nivel = Math.max(...selectedView.accounts.map(acc => acc.nivel || 1));
-               // }
-               // console.log("Nível máximo para a visão atual:", max_nivel);
-  
-               // Atualiza o subtítulo com o nome da visão
-               viewTitle.textContent = `${selectedView.plan_name} (DataSource: ${selectedView.data_source_name})`;
-  
-               // Monta a ÚNICA linha de cabeçalho com os títulos das colunas
-               const headerRow = thead.insertRow();
-  
-               // Cabeçalho para a coluna de Descrição (agora é a primeira coluna visível)
-               const thDescricao = document.createElement('th');
-               thDescricao.textContent = 'Descrição';
-               thDescricao.classList.add('indicador-col'); // Usa a classe para estilização e como marcador de cabeçalho de linha
-               headerRow.appendChild(thDescricao);
-  
-  
-               // Adiciona colunas de cabeçalho para cada período (com listeners de seleção de coluna)
-               selectedView.periodos.forEach((periodString, colIndex) => {
-                   const th = document.createElement('th');
-                   th.textContent = formatPeriodHeader(periodString);
-                   th.style.textAlign = 'center';
-                   th.classList.add('cabecalho-ano'); // Classe da V1 para estilo/marcação de seleção
-                   th.setAttribute('data-col', colIndex); // Marca com índice da coluna
-  
-                   // Event listener para seleção de coluna (Ctrl/Cmd e Shift)
-                   th.addEventListener('click', function(e) {
-                       const clickedCol = parseInt(this.getAttribute('data-col'));
-                       const allPeriodHeaders = Array.from(thead.querySelectorAll('th[data-col]'));
-  
-                       if (!e.ctrlKey && !e.shiftKey) {
-                           clearSelection();
-                           this.classList.add('cabecalho-selecionado');
-                           tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.add('cell-selecionada'));
-                       } else if (e.ctrlKey || e.metaKey) {
-                           this.classList.toggle('cabecalho-selecionado');
-                           tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.toggle('cell-selecionada'));
-                       } else if (e.shiftKey) {
-                           let lastSelectedCol = -1;
-                           // Encontra a última coluna de período selecionada explicitamente (não o cabeçalho de descrição)
-                           for (let i = 0; i < allPeriodHeaders.length; i++) {
-                               if (allPeriodHeaders[i].classList.contains('cabecalho-selecionado')) {
-                                   lastSelectedCol = parseInt(allPeriodHeaders[i].getAttribute('data-col'));
-                                   break;
-                               }
-                           }
-                           // Se nenhuma coluna de período estava selecionada, considera a primeira coluna de período como o ponto de partida
-                           if (lastSelectedCol === -1 && allPeriodHeaders.length > 0) {
-                               lastSelectedCol = parseInt(allPeriodHeaders[0].getAttribute('data-col'));
-                           } else if (lastSelectedCol === -1) { // Se não há colunas de período
-                               lastSelectedCol = clickedCol;
-                           }
-  
-                           const startCol = Math.min(lastSelectedCol, clickedCol);
-                           const endCol = Math.max(lastSelectedCol, clickedCol);
-  
-                           allPeriodHeaders.forEach(header => {
-                                const headerCol = parseInt(header.getAttribute('data-col'));
-                                if (headerCol >= startCol && headerCol <= endCol) {
-                                    header.classList.add('cabecalho-selecionado');
-                                } else {
-                                    header.classList.remove('cabecalho-selecionado');
-                                }
-                           });
-  
-                           tbody.querySelectorAll('tr').forEach(row => {
-                               row.querySelectorAll('td.planilha-valor').forEach(cell => {
-                                   const cellCol = parseInt(cell.getAttribute('data-col'));
-                                   if (cellCol >= startCol && cellCol <= endCol) {
-                                       cell.classList.add('cell-selecionada');
-                                   } else {
-                                       cell.classList.remove('cell-selecionada');
-                                   }
-                               });
-                           });
-                       }
-                       e.stopPropagation();
-                   });
-  
-                   headerRow.appendChild(th);
-               });
-  
-  
-               // Monta o corpo da tabela (linhas para cada conta)
-               selectedView.accounts.forEach((account, rowIndex) => {
-                   const dataRow = tbody.insertRow();
-  
-                    // Adiciona classes de estilo à linha inteira com base no tipo da conta
-                   if (account.tipo === 'sintetica') {
-                       dataRow.classList.add('conta-sintetica');
-                   } else if (account.tipo === 'analitica') {
-                       dataRow.classList.add('conta-analitica');
-                   } else if (typeof account.tipo === 'string' && account.tipo.substring(0, 7) === 'calculo') {
-                       dataRow.classList.add('conta-calculo');
-                   }
-  
-                   // REMOVIDO: Adiciona a classe 'last-level-row' se a conta estiver no nível mais profundo
-                   // if (account.nivel === max_nivel) {
-                   //     dataRow.classList.add('last-level-row');
-                   // }
-  
-                   // Célula para a Descrição (agora também o "cabeçalho de linha" para seleção)
-                   const descricaoCell = dataRow.insertCell();
-                   descricaoCell.textContent = account.descricao;
-                   descricaoCell.classList.add('account-descricao');
-                   // CORRIGIDO: Declarar nivel aqui antes de usar
-                   const nivel = typeof account.nivel === 'number' && !isNaN(account.nivel) ? account.nivel : 1;
-                   descricaoCell.classList.add(getIndentClass(nivel));
-                   
-                   descricaoCell.classList.add('indicador-col'); // Marca a célula de descrição como indicador de linha
-                   descricaoCell.setAttribute('data-row', rowIndex); // Marca com o índice da linha
-  
-                   // Event listener para seleção de linha (Ctrl/Cmd e Shift) - AGORA NA CÉLULA DE DESCRIÇÃO
-                   descricaoCell.addEventListener('click', function(e) {
-                       const clickedRow = parseInt(this.getAttribute('data-row'));
-                       const allRowHeaders = Array.from(tbody.querySelectorAll('td.indicador-col')); // Todas as células de descrição/indicador
-  
-                       if (!e.ctrlKey && !e.shiftKey) {
-                           clearSelection();
-                           this.classList.add('indicador-selecionado');
-                           dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
-                       } else if (e.ctrlKey || e.metaKey) {
-                           this.classList.toggle('indicador-selecionado');
-                           dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.toggle('cell-selecionada'));
-                       } else if (e.shiftKey) {
-                           let lastSelectedRow = -1;
-                           for (let i = 0; i < allRowHeaders.length; i++) {
-                               if (allRowHeaders[i].classList.contains('indicador-selecionado')) {
-                                   lastSelectedRow = parseInt(allRowHeaders[i].getAttribute('data-row'));
-                                   break;
-                               }
-                           }
-                           if (lastSelectedRow === -1 && allRowHeaders.length > 0) {
-                               lastSelectedRow = parseInt(allRowHeaders[0].getAttribute('data-row'));
-                           } else if (lastSelectedRow === -1) { // Se não há linhas de cabeçalho
-                               lastSelectedRow = clickedRow;
-                           }
-  
-                           const startRow = Math.min(lastSelectedRow, clickedRow);
-                           const endRow = Math.max(lastSelectedRow, clickedRow);
-  
-                           allRowHeaders.forEach(header => {
-                               const headerRow = parseInt(header.getAttribute('data-row'));
-                               if (headerRow >= startRow && headerRow <= endRow) {
-                                    header.classList.add('indicador-selecionado');
-                               } else {
-                                    header.classList.remove('indicador-selecionado');
-                               }
-                           });
-  
-                           tbody.querySelectorAll('tr').forEach(row => {
-                               const rowIdx = parseInt(row.querySelector('td.indicador-col').getAttribute('data-row'));
-                               if (rowIdx >= startRow && rowIdx <= endRow) {
-                                   row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
-                               } else {
-                                   row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.remove('cell-selecionada'));
-                               }
-                           });
-                       }
-                       e.stopPropagation();
-                   });
-  
-                   dataRow.appendChild(descricaoCell);
-  
-  
-                   // Adiciona células para os valores de cada período (com listeners de seleção de célula)
-                   selectedView.periodos.forEach((periodString, periodIndex) => {
-                       const valueCell = dataRow.insertCell();
-                       const value = account.valores[periodString];
-                       let formattedValue = formatCurrency(value);
-  
-                       valueCell.textContent = formattedValue;
-                       valueCell.classList.add('value-cell');
-                       valueCell.classList.add('planilha-valor'); // Importante para seleção de área
-                       valueCell.setAttribute('data-row', rowIndex);
-                       valueCell.setAttribute('data-col', periodIndex); // ColIndex para a célula de valor
-  
-  
-                       // Event listeners para seleção de célula individual/faixa
-                       valueCell.addEventListener('mousedown', function(e) {
-                            isMouseDown = true;
-                            if (e.ctrlKey || e.metaKey) {
-                                this.classList.toggle('cell-selecionada');
-                                lastSelectedCell = this;
-                            } else if (e.shiftKey && lastSelectedCell) {
-                                selectCellsInRange(getCellPosition(lastSelectedCell), getCellPosition(this));
-                            } else {
-                                clearSelection();
-                                this.classList.add('cell-selecionada');
-                                lastSelectedCell = this;
-                            }
-                            startCell = this;
-                            e.preventDefault();
-                            e.stopPropagation(); // Impede que o clique se propague e acione listeners de linha/coluna
-                        });
-  
-                        valueCell.addEventListener('mouseover', function(e) {
-                            if (isMouseDown && startCell) {
-                                selectCellsInRange(getCellPosition(startCell), getCellPosition(this));
-                            }
-                        });
-  
-                        valueCell.addEventListener('mouseup', function() {
-                            isMouseDown = false;
-                            startCell = null;
-                        });
-  
-  
-                       dataRow.appendChild(valueCell);
-                   });
-  
-                   tbody.appendChild(dataRow);
-               });
-  
-               // Adiciona um listener global para limpar a seleção ao clicar fora da tabela
-                document.addEventListener('mousedown', function(e) {
-                    if (!tabela.contains(e.target) && !viewSelect.contains(e.target)) {
+            } catch (e) {
+                // console.warn(`Não foi possível formatar o período '${periodString}' como data. Usando string original.`);
+            }
+            return String(periodString).trim();
+        }
+
+        function getIndentClass(level) {
+            if (typeof level !== 'number' || isNaN(level) || level < 1) return 'indent-level-0';
+            return `indent-level-${Math.max(0, level - 1)}`;
+        }
+
+        // Função auxiliar para obter o código do pai (ex: de "1.1.1" retorna "1.1")
+        function getParentCode(accountCode) {
+            if (typeof accountCode === 'string') {
+                const parts = accountCode.split('.');
+                if (parts.length > 1) {
+                    return parts.slice(0, -1).join('.');
+                }
+            }
+            return null; // Retorna null para contas de nível superior ou inválidas
+        }
+
+        // --- Funções de Interação da Tabela (Seleção) ---
+        function getCellPosition(cell) {
+            return {
+                row: parseInt(cell.getAttribute('data-row')),
+                col: parseInt(cell.getAttribute('data-col'))
+            };
+        }
+
+        function selectCellsInRange(start, end) {
+            const allCells = tabela.querySelectorAll('.planilha-valor');
+            allCells.forEach(cell => {
+                const { row, col } = getCellPosition(cell);
+                const inRowRange = row >= Math.min(start.row, end.row) && row <= Math.max(start.row, end.row);
+                const inColRange = col >= Math.min(start.col, end.col) && col <= Math.max(start.col, end.col);
+                cell.classList.toggle('cell-selecionada', inRowRange && inColRange);
+            });
+        }
+
+        function clearSelection() {
+            tabela.querySelectorAll('.cell-selecionada').forEach(cell => cell.classList.remove('cell-selecionada'));
+            thead.querySelectorAll('.cabecalho-selecionado').forEach(th => th.classList.remove('cabecalho-selecionado'));
+            tbody.querySelectorAll('.indicador-selecionado').forEach(td => td.classList.remove('indicador-selecionado'));
+        }
+
+        // --- NOVA FUNÇÃO PARA EXPANDIR/COLAPSAR ---
+        function toggleRowVisibility(targetRow) {
+            const isCurrentlyCollapsed = targetRow.classList.contains('collapsed'); // Estado ANTES do toggle
+            const targetAccountCode = targetRow.dataset.accountCode;
+            const targetLevel = parseInt(targetRow.dataset.level);
+
+            // 1. Alterna o estado da linha clicada
+            targetRow.classList.toggle('collapsed');
+            targetRow.classList.remove('expanded'); 
+            
+            // 2. Atualiza a seta visualmente
+            const arrow = targetRow.querySelector('.toggle-arrow');
+            if (arrow) {
+                arrow.innerHTML = isCurrentlyCollapsed ? '&#9660;' : '&#9658;'; 
+            }
+
+            const allRows = Array.from(tbody.children); 
+            let foundTargetRow = false;
+
+            for (const currentRow of allRows) {
+                // Pula as linhas até encontrar a linha alvo
+                if (!foundTargetRow) {
+                    if (currentRow === targetRow) {
+                        foundTargetRow = true;
+                    }
+                    continue; 
+                }
+
+                const currentAccountCode = currentRow.dataset.accountCode;
+                const currentLevel = parseInt(currentRow.dataset.level);
+                
+                const isDescendantOfTarget = currentAccountCode.startsWith(targetAccountCode + '.');
+                
+                if (!isDescendantOfTarget || currentLevel <= targetLevel) {
+                    break;
+                }
+
+                let willBeHiddenByParent = targetRow.classList.contains('collapsed'); 
+                
+                if (!willBeHiddenByParent) { 
+                    let parentChainVisible = true;
+                    let checkCode = currentAccountCode; 
+                    
+                    while (checkCode && checkCode !== targetAccountCode) { 
+                        const directParentCode = getParentCode(checkCode);
+                        if (!directParentCode) { 
+                            parentChainVisible = false; 
+                            break;
+                        }
+                        const parentDOMRow = tbody.querySelector(`tr[data-account-code="${directParentCode}"]`);
+                        
+                        if (parentDOMRow && (parentDOMRow.classList.contains('hidden-by-collapse') || parentDOMRow.classList.contains('collapsed'))) {
+                            parentChainVisible = false;
+                            break;
+                        }
+                        checkCode = directParentCode;
+                    }
+                    willBeHiddenByParent = !parentChainVisible; 
+                }
+
+                if (willBeHiddenByParent) { 
+                    currentRow.classList.add('hidden-by-collapse');
+                    if (currentRow.classList.contains('collapsible-row')) {
+                        currentRow.classList.add('collapsed');
+                        const nestedArrow = currentRow.querySelector('.toggle-arrow');
+                        if (nestedArrow) nestedArrow.innerHTML = '&#9658;'; 
+                    }
+                } else {
+                    currentRow.classList.remove('hidden-by-collapse');
+                    if (currentRow.classList.contains('collapsible-row')) {
+                        const nestedArrow = currentRow.querySelector('.toggle-arrow');
+                        if (nestedArrow) {
+                            nestedArrow.innerHTML = currentRow.classList.contains('collapsed') ? '&#9658;' : '&#9660;';
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // --- Função Principal para Renderizar a Tabela ---
+        function renderTable(viewIndex) {
+            // Limpa cabeçalho e corpo atuais da tabela
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+            viewTitle.textContent = 'Selecione uma Visão para Visualizar...';
+
+            // Verifica se não há dados de visões calculadas
+            if (!calculatedViewsData || !calculatedViewsData.calculated_views || calculatedViewsData.calculated_views.length === 0) {
+                const headerRow = thead.insertRow();
+                const thDescricao = document.createElement('th');
+                thDescricao.textContent = 'Descrição';
+                headerRow.appendChild(thDescricao);
+                // Adiciona uma mensagem no corpo da tabela para clareza
+                const noDataRow = tbody.insertRow();
+                const noDataCell = noDataRow.insertCell();
+                noDataCell.colSpan = 2; // Abrange as colunas Descrição e pelo menos uma de período
+                noDataCell.textContent = "Nenhuma visão calculada disponível. Por favor, processe os dados primeiro.";
+                noDataCell.style.textAlign = 'center';
+                noDataCell.style.padding = '20px';
+                return;
+            }
+
+            // Verifica se o índice da visão é válido para os dados carregados
+            if (viewIndex === "" || viewIndex < 0 || viewIndex >= calculatedViewsData.calculated_views.length) {
+                // Se inválido ou vazio (seleção inicial ou "-- Selecione --"), exibe o cabeçalho básico
+                const headerRow = thead.insertRow();
+                const thDescricao = document.createElement('th');
+                thDescricao.textContent = 'Descrição';
+                headerRow.appendChild(thDescricao);
+                // Exibe a mensagem padrão para seleção
+                viewTitle.textContent = 'Selecione uma Visão para Visualizar...';
+                return;
+            }
+
+            // Pega a visão calculada selecionada do array
+            const selectedView = calculatedViewsData.calculated_views[viewIndex];
+            console.log("Renderizando visão:", selectedView); // Para depuração
+
+            // Atualiza o subtítulo com o nome da visão
+            viewTitle.textContent = `${selectedView.plan_name} (DataSource: ${selectedView.data_source_name})`;
+
+            // Monta a ÚNICA linha de cabeçalho com os títulos das colunas
+            const headerRow = thead.insertRow();
+
+            // Cabeçalho para a coluna de Descrição (agora é a primeira coluna visível)
+            const thDescricao = document.createElement('th');
+            thDescricao.textContent = 'Descrição';
+            thDescricao.classList.add('indicador-col'); // Usa a classe para estilização e como marcador de cabeçalho de linha
+            headerRow.appendChild(thDescricao);
+
+            // Adiciona colunas de cabeçalho para cada período (com listeners de seleção de coluna)
+            selectedView.periodos.forEach((periodString, colIndex) => {
+                const th = document.createElement('th');
+                th.textContent = formatPeriodHeader(periodString);
+                th.style.textAlign = 'center';
+                th.classList.add('cabecalho-ano'); // Classe para estilo/marcação de seleção
+                th.setAttribute('data-col', colIndex); // Marca com índice da coluna
+
+                // Event listener para seleção de coluna (Ctrl/Cmd e Shift)
+                th.addEventListener('click', function(e) {
+                    const clickedCol = parseInt(this.getAttribute('data-col'));
+                    const allPeriodHeaders = Array.from(thead.querySelectorAll('th[data-col]'));
+
+                    if (!e.ctrlKey && !e.shiftKey) { // Clique simples: limpa e seleciona
                         clearSelection();
+                        this.classList.add('cabecalho-selecionado');
+                        tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.add('cell-selecionada'));
+                    } else if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd+clique: toggle seleção
+                        this.classList.toggle('cabecalho-selecionado');
+                        tbody.querySelectorAll(`td.planilha-valor[data-col="${clickedCol}"]`).forEach(cell => cell.classList.toggle('cell-selecionada'));
+                    } else if (e.shiftKey) { // Shift+clique: seleção de faixa
+                        let lastSelectedCol = -1;
+                        // Encontra a última coluna de período selecionada explicitamente
+                        for (let i = 0; i < allPeriodHeaders.length; i++) {
+                            if (allPeriodHeaders[i].classList.contains('cabecalho-selecionado')) {
+                                lastSelectedCol = parseInt(allPeriodHeaders[i].getAttribute('data-col'));
+                                break;
+                            }
+                        }
+                        // Se nenhuma estava selecionada, começa da primeira coluna de período
+                        if (lastSelectedCol === -1 && allPeriodHeaders.length > 0) {
+                            lastSelectedCol = parseInt(allPeriodHeaders[0].getAttribute('data-col'));
+                        } else if (lastSelectedCol === -1) { // Se não há colunas de período
+                            lastSelectedCol = clickedCol;
+                        }
+
+                        const startCol = Math.min(lastSelectedCol, clickedCol);
+                        const endCol = Math.max(lastSelectedCol, clickedCol);
+
+                        allPeriodHeaders.forEach(header => {
+                            const headerCol = parseInt(header.getAttribute('data-col'));
+                            if (headerCol >= startCol && headerCol <= endCol) {
+                                header.classList.add('cabecalho-selecionado');
+                            } else {
+                                header.classList.remove('cabecalho-selecionado');
+                            }
+                        });
+
+                        tbody.querySelectorAll('tr').forEach(row => {
+                            row.querySelectorAll('td.planilha-valor').forEach(cell => {
+                                const cellCol = parseInt(cell.getAttribute('data-col'));
+                                if (cellCol >= startCol && cellCol <= endCol) {
+                                    cell.classList.add('cell-selecionada');
+                                } else {
+                                    cell.classList.remove('cell-selecionada');
+                                }
+                            });
+                        });
+                    }
+                    e.stopPropagation(); // Impede que o clique se propague para outros listeners
+                });
+
+                headerRow.appendChild(th);
+            });
+
+
+            // Monta o corpo da tabela (linhas para cada conta)
+            selectedView.accounts.forEach((account, rowIndex) => {
+                const dataRow = tbody.insertRow();
+                // Adiciona atributos de dados para hierarquia e identificação (para o toggle)
+                dataRow.dataset.accountCode = account.codigo;
+                dataRow.dataset.level = account.nivel;
+                // Adiciona data-parent-code apenas se a conta não for de nível 1
+                if (account.nivel > 1) {
+                    dataRow.dataset.parentCode = getParentCode(account.codigo);
+                }
+
+                // Adiciona classes de estilo à linha inteira com base no tipo da conta
+                if (account.tipo === 'sintetica') {
+                    dataRow.classList.add('conta-sintetica');
+                } else if (account.tipo === 'analitica') {
+                    dataRow.classList.add('conta-analitica');
+                } else if (typeof account.tipo === 'string' && account.tipo.substring(0, 7) === 'calculo') {
+                    dataRow.classList.add('conta-calculo');
+                }
+
+                // Célula para a Descrição (agora também o "cabeçalho de linha" para seleção)
+                const descricaoCell = dataRow.insertCell();
+                const nivel = typeof account.nivel === 'number' && !isNaN(account.nivel) ? account.nivel : 1;
+                descricaoCell.classList.add('account-descricao', getIndentClass(nivel));
+                descricaoCell.classList.add('indicador-col'); // Marca a célula de descrição como indicador de linha
+                descricaoCell.setAttribute('data-row', rowIndex); // Marca com o índice da linha
+
+                // Implementação do toggle SOMENTE para contas sintéticas
+                if (account.tipo === 'sintetica') { 
+                    const toggleArrow = document.createElement('span');
+                    toggleArrow.classList.add('toggle-arrow');
+                    toggleArrow.innerHTML = '&#9660;'; // Usa innerHTML para renderizar o símbolo corretamente
+                    descricaoCell.prepend(toggleArrow); // Adiciona a seta antes do texto
+                    dataRow.classList.add('collapsible-row'); // Marca a linha como colapsável (por padrão, é expandida)
+
+                    // Listener de clique diretamente na seta de toggle
+                    toggleArrow.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Impede a propagação do clique para a célula pai (descricaoCell)
+                        toggleRowVisibility(dataRow); // Chama a função de toggle
+                    });
+                }
+                // Cria um span para o texto da descrição para que ele não se misture com a seta
+                const descriptionTextSpan = document.createElement('span');
+                descriptionTextSpan.textContent = account.descricao;
+                descricaoCell.append(descriptionTextSpan); // Adiciona o span com o texto da descrição da conta
+
+                // Event listener para seleção de linha (Ctrl/Cmd e Shift)
+                // Este listener agora lida APENAS com a seleção, sem interferir no toggle
+                descricaoCell.addEventListener('click', function(e) {
+                    const clickedRow = parseInt(this.getAttribute('data-row'));
+                    const allRowHeaders = Array.from(tbody.querySelectorAll('td.indicador-col')); // Todas as células de descrição/indicador
+
+                    if (!e.ctrlKey && !e.shiftKey) { // Clique simples
+                        clearSelection();
+                        this.classList.add('indicador-selecionado');
+                        dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
+                    } else if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd+clique
+                        this.classList.toggle('indicador-selecionado');
+                        dataRow.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.toggle('cell-selecionada'));
+                    } else if (e.shiftKey) { // Shift+clique
+                        let lastSelectedRow = -1;
+                        for (let i = 0; i < allRowHeaders.length; i++) {
+                            if (allRowHeaders[i].classList.contains('indicador-selecionado')) {
+                                lastSelectedRow = parseInt(allRowHeaders[i].getAttribute('data-row'));
+                                break;
+                            }
+                        }
+                        if (lastSelectedRow === -1 && allRowHeaders.length > 0) {
+                            lastSelectedRow = parseInt(allRowHeaders[0].getAttribute('data-row'));
+                        } else if (lastSelectedRow === -1) { // Se não há linhas de cabeçalho
+                            lastSelectedRow = clickedRow;
+                        }
+
+                        const startRow = Math.min(lastSelectedCol, clickedCol);
+                        const endCol = Math.max(lastSelectedCol, clickedCol);
+
+                        allRowHeaders.forEach(header => {
+                            const headerRow = parseInt(header.getAttribute('data-row'));
+                            if (headerRow >= startRow && headerRow <= endRow) {
+                                header.classList.add('indicador-selecionado');
+                            } else {
+                                header.classList.remove('indicador-selecionado');
+                            }
+                        });
+
+                        tbody.querySelectorAll('tr').forEach(row => {
+                            const rowIdx = parseInt(row.querySelector('td.indicador-col').getAttribute('data-row'));
+                            if (rowIdx >= startRow && rowIdx >= endRow) { // Corrigido aqui: deve ser <= endRow
+                                row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.add('cell-selecionada'));
+                            } else {
+                                row.querySelectorAll('.planilha-valor').forEach(cell => cell.classList.remove('cell-selecionada'));
+                            }
+                        });
                     }
                 });
-                document.addEventListener('mouseup', () => {
-                    isMouseDown = false;
-                    startCell = null;
+
+                dataRow.appendChild(descricaoCell);
+
+
+                // Adiciona células para os valores de cada período (com listeners de seleção de célula)
+                selectedView.periodos.forEach((periodString, periodIndex) => {
+                    const valueCell = dataRow.insertCell();
+                    const value = account.valores[periodString];
+                    let formattedValue = formatCurrency(value);
+
+                    valueCell.textContent = formattedValue;
+                    valueCell.classList.add('value-cell');
+                    valueCell.classList.add('planilha-valor'); // Importante para seleção de área
+                    valueCell.setAttribute('data-row', rowIndex);
+                    valueCell.setAttribute('data-col', periodIndex); // ColIndex para a célula de valor
+
+
+                    // Event listeners para seleção de célula individual/faixa
+                    valueCell.addEventListener('mousedown', function(e) {
+                        isMouseDown = true;
+                        if (e.ctrlKey || e.metaKey) { // Ctrl/Cmd+clique: toggle seleção individual
+                            this.classList.toggle('cell-selecionada');
+                            lastSelectedCell = this;
+                        } else if (e.shiftKey && lastSelectedCell) { // Shift+clique: seleção de faixa
+                            selectCellsInRange(getCellPosition(lastSelectedCell), getCellPosition(this));
+                        } else { // Clique simples: limpa e seleciona
+                            clearSelection();
+                            this.classList.add('cell-selecionada');
+                            lastSelectedCell = this;
+                        }
+                        startCell = this;
+                        e.preventDefault(); // Impede seleção de texto padrão do navegador
+                        e.stopPropagation(); // Impede propagação para listeners de linha/coluna
+                    });
+
+                    valueCell.addEventListener('mouseover', function(e) {
+                        if (isMouseDown && startCell) {
+                            selectCellsInRange(getCellPosition(startCell), getCellPosition(this));
+                        }
+                    });
+
+                    valueCell.addEventListener('mouseup', function() {
+                        isMouseDown = false;
+                        startCell = null;
+                    });
+
+
+                    dataRow.appendChild(valueCell);
                 });
-           }
-  
-          // --- Inicialização ---
-  
-           // Popular o dropdown de seleção de visão
-           if (calculatedViewsData && calculatedViewsData.calculated_views && calculatedViewsData.calculated_views.length > 0) {
-               const defaultOption = document.createElement('option');
-               defaultOption.value = "";
-               defaultOption.textContent = "-- Selecione --";
-               viewSelect.appendChild(defaultOption);
-  
-               calculatedViewsData.calculated_views.forEach((view, index) => {
-                   const option = document.createElement('option');
-                   option.value = index;
-                   option.textContent = `${view.plan_name} (com ${view.data_source_name})`;
-                   viewSelect.appendChild(option);
-               });
-           } else {
+
+                tbody.appendChild(dataRow);
+            });
+
+            // Adiciona um listener global para limpar a seleção ao clicar fora da tabela
+            document.addEventListener('mousedown', function(e) {
+                if (!tabela.contains(e.target) && !viewSelect.contains(e.target)) {
+                    clearSelection();
+                }
+            });
+            document.addEventListener('mouseup', () => {
+                isMouseDown = false;
+                startCell = null;
+            });
+        }
+
+        // --- Inicialização ---
+
+        // Popular o dropdown de seleção de visão
+        if (calculatedViewsData && calculatedViewsData.calculated_views && calculatedViewsData.calculated_views.length > 0) {
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "-- Selecione --";
+            viewSelect.appendChild(defaultOption);
+
+            calculatedViewsData.calculated_views.forEach((view, index) => {
                 const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "Nenhuma visão calculada encontrada.";
+                option.value = index;
+                option.textContent = `${view.plan_name} (com ${view.data_source_name})`;
                 viewSelect.appendChild(option);
-                viewSelect.disabled = true;
-                console.log("Nenhuma visão calculada encontrada no JSON.");
-           }
-  
-           // Adiciona listener para o evento de mudança no dropdown
-           viewSelect.addEventListener('change', (event) => {
-               const selectedValue = event.target.value;
-               if (selectedValue !== "") {
-                   renderTable(parseInt(selectedValue));
-               } else {
-                    renderTable("");
-               }
-           });
-  
-           // Inicialização: Renderiza a tabela vazia com os títulos iniciais
+            });
+            // Opcional: Seleciona automaticamente a primeira visão se houver apenas uma, ou deixa em branco para seleção
+            if (calculatedViewsData.calculated_views.length === 1) {
+                viewSelect.value = 0;
+                renderTable(0); // Renderiza a primeira visão por padrão
+            } else {
+                renderTable(""); // Renderiza o estado inicial "Selecione uma Visão..."
+            }
+        } else {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "Nenhuma visão calculada encontrada.";
+            viewSelect.appendChild(option);
+            viewSelect.disabled = true; // Desabilita o dropdown se não há dados
+            // Renderiza a tabela para mostrar a mensagem de "nenhum dado";
             renderTable("");
-  
-            // Adiciona listener global para desabilitar a seleção de texto do navegador
-            document.addEventListener('selectstart', function(e){ e.preventDefault(); });
-  
-  
-      </script>
-  </body>
-  </html>
+        }
+
+        // Adiciona listener para o evento de mudança no dropdown
+        viewSelect.addEventListener('change', (event) => {
+            const selectedValue = event.target.value;
+            if (selectedValue !== "") {
+                renderTable(parseInt(selectedValue));
+            } else {
+                renderTable("");
+            }
+        });
+
+        // Adiciona listener global para desabilitar a seleção de texto do navegador
+        document.addEventListener('selectstart', function(e){ e.preventDefault(); });
+
+    </script>
+</body>
+</html>
